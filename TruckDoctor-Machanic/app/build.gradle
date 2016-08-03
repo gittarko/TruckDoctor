@@ -1,0 +1,118 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.1"
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+//        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file('sign/debug.jks')
+            keyAlias 'debug_js'
+            storePassword DEBUG_KEYSTORE_PASSWORD
+            keyPassword   DEBUG_KEY_PASSWORD
+        }
+
+        release {
+            storeFile file('sign/release.jks')
+            keyAlias 'release_js'
+            storePassword DEBUG_KEYSTORE_PASSWORD
+            keyPassword   DEBUG_KEY_PASSWORD
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable false
+            jniDebuggable false
+            signingConfig signingConfigs.release
+        }
+        debug {
+            debuggable true
+            jniDebuggable true
+            signingConfig signingConfigs.debug
+            minifyEnabled false
+        }
+    }
+
+    productFlavors {
+        flavor_machanic_dev {
+            applicationId 'com.juma.truckdoctor.js'
+            versionCode 1
+            versionName '1.0.0'
+            manifestPlaceholders = [env             : "dev",
+                                    app             : "js",
+                                    app_name        : "@string/app_name",
+                                    JPUSH_APP_KEY   : "7f9b6370d3bd0ebab200f6e9",
+                                    GETUI_APP_ID    : "hsp51sH19N6CtUD1SEPBk7",
+                                    GETUI_APP_KEY   : "69UjWs2xSW63vNxJgzGse6",
+                                    GETUI_APP_SECRET: "nL9TNTAipk9ULQMj2RRYN3",
+                                    PACKAGE_NAME    : applicationId]
+        }
+
+        flavor_machanic_test {
+            applicationId 'com.juma.truckdoctor.js'
+            versionCode 1
+            versionName '1.0.0'
+            manifestPlaceholders = [env             : "test",
+                                    app             : "js",
+                                    app_name        : "@string/app_name",
+                                    JPUSH_APP_KEY   : "7f9b6370d3bd0ebab200f6e9",
+                                    GETUI_APP_ID    : "hsp51sH19N6CtUD1SEPBk7",
+                                    GETUI_APP_KEY   : "69UjWs2xSW63vNxJgzGse6",
+                                    GETUI_APP_SECRET: "nL9TNTAipk9ULQMj2RRYN3",
+                                    PACKAGE_NAME    : applicationId]
+        }
+
+        flavor_machanic_official {
+            applicationId 'com.juma.truckdoctor.js'
+            versionCode 1
+            versionName '1.0.0'
+            manifestPlaceholders = [env             : "official",
+                                    app             : "js",
+                                    app_name        : "@string/app_name",
+                                    JPUSH_APP_KEY   : "7f9b6370d3bd0ebab200f6e9",
+                                    GETUI_APP_ID    : "hsp51sH19N6CtUD1SEPBk7",
+                                    GETUI_APP_KEY   : "69UjWs2xSW63vNxJgzGse6",
+                                    GETUI_APP_SECRET: "nL9TNTAipk9ULQMj2RRYN3",
+                                    PACKAGE_NAME    : applicationId]
+        }
+
+    }
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def file = outputs[0].outputFile
+            def newFileName = 'TruckDoctor-' + variant.productFlavors[0].name + '-' + buildType.name + '-' +
+                    variant.productFlavors[0].versionName + '.apk'
+            outputs[0].outputFile = new File(file.parent, newFileName)
+        }
+    }
+
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+//    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+//        exclude group: 'com.android.support', module: 'support-annotations'
+//    })
+    compile 'com.android.support:appcompat-v7:24.1.1'
+    compile 'com.android.support:design:24.1.1'
+    testCompile 'junit:junit:4.12'
+
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
+    compile 'com.google.code.gson:gson:2.6.2'
+    compile 'com.alibaba:fastjson:1.2.12'
+//    compile 'com.android.support:support-v4:23.3.0'
+    compile 'com.zhy:okhttputils:2.6.2'
+    compile files('libs/jpush-android-2.1.5.jar')
+
+}
