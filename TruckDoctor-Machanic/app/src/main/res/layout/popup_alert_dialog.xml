@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_popup"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="35dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="标题"
+        android:textSize="18sp"
+        android:visibility="visible"/>
+
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_title"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:gravity="center"
+        android:visibility="visible"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tv_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="3dp"
+            android:minHeight="30dp"
+            android:gravity="center"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:textSize="14sp"
+            tools:text="提示内容" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:weightSum="2"
+        android:orientation="horizontal"
+        android:layout_below="@id/content"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/negativeButton"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:gravity="center"
+            android:text="取消"
+            android:textSize="16sp"
+            />
+
+        <Space
+            android:layout_width="25dp"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/positiveButton"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:gravity="center"
+            android:text="确认"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+</RelativeLayout>

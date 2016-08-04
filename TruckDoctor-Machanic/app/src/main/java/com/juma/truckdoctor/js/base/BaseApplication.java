@@ -16,12 +16,14 @@ import cn.jpush.android.api.JPushInterface;
 
 public class BaseApplication extends Application {
     //应用数据存储目录
-    private static final String STORAGE_DIR;
-    private static final String CRASH_DIR;
-
+    public static final String STORAGE_DIR;
+    public static final String CRASH_DIR;
+    //本地存储用户信息使用的标识key
+    public static final String STORAGE_USER_KEY;
     static {
-        STORAGE_DIR = "truckdorctor/";
+        STORAGE_DIR = "truckdoctor/";
         CRASH_DIR = STORAGE_DIR + "crash" + "/";
+        STORAGE_USER_KEY = "truckdoctor_user";
     }
 
     public BaseApplication() {
