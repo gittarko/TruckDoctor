@@ -1,9 +1,8 @@
 package com.juma.truckdoctor.js.utils;
 
 import android.content.Context;
-
-import com.lhl.basetools.helper.MetaDataHelper;
-
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 
 /**
  * Created by Administrator on 2016/6/6 0006.
@@ -17,15 +16,26 @@ public final class SystemParamUtil {
     public static final String ENV_TEST = "test";
     public static final String ENV_OFFICIAL = "official";
 
-    public static final String APP_HZ = "hz";
-    public static final String APP_SJ = "sj";
+    public static final String APP_MACHANIC = "js";
+    public static final String APP_DRIVER = "sj";
 
     private static String paramEnv;
     private static String paramApp;
 
     public static void init(Context context) {
-        paramEnv = MetaDataHelper.getMetaData(context, KEY_ENV);
-        paramApp = MetaDataHelper.getMetaData(context, KEY_APP);
+        paramEnv = getMetaData(context, KEY_ENV);
+        paramApp = getMetaData(context, KEY_APP);
+    }
+
+    public static String getMetaData(Context context, String name) {
+        try {
+            ApplicationInfo appInfo = context.getPackageManager()
+                    .getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+            return appInfo.metaData.getString(name);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
     public static String getParamEnv() {
