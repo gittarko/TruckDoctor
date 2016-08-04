@@ -68,6 +68,7 @@ public class Api {
         } else if (TextUtils.equals(SystemParamUtil.APP_MACHANIC, SystemParamUtil.getParamApp())) {
             url = urlMachanic;
         }
+
     }
 
 }

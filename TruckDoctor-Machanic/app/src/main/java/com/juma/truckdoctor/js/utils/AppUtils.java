@@ -41,14 +41,26 @@ public class AppUtils {
      * 拨打电话
      */
     public static void getPhoneCall(Context context, String phoneNum) {
-        Pattern p = Pattern.compile("\\d+?");
-        Matcher match = p.matcher(phoneNum);
-        //正则验证输入的是否为数字
-        if(match.matches()){
+        if(isPhoneValid(phoneNum)) {
             Intent intent=new Intent("android.intent.action.CALL", Uri.parse("tel:"+phoneNum));
             context.startActivity(intent);
         }else{
             Toast.makeText(context, "号码格式错误",Toast.LENGTH_LONG).show();
         }
     }
+
+    /**
+     * 检查是否是手机号格式
+     * @param phoneNum
+     */
+    public static boolean isPhoneValid(String phoneNum) {
+        Pattern p = Pattern.compile("\\d+?");
+        Matcher match = p.matcher(phoneNum);
+        //正则验证输入的是否为数字
+        if(match.matches()){
+            return true;
+        }
+        return false;
+    }
+
 }

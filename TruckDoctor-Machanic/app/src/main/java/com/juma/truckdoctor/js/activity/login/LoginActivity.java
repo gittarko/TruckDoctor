@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -35,12 +36,17 @@ import android.widget.Toast;
 
 import com.juma.truckdoctor.js.R;
 import com.juma.truckdoctor.js.api.Api;
+import com.juma.truckdoctor.js.api.ApiUser;
+import com.juma.truckdoctor.js.api.HttpResponse;
 import com.juma.truckdoctor.js.base.BaseActivity;
+import com.juma.truckdoctor.js.model.User;
 import com.juma.truckdoctor.js.utils.AppUtils;
 import com.juma.truckdoctor.js.widget.PopUpWindowAlertDialog;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -170,7 +176,7 @@ public class LoginActivity extends BaseActivity {
         View focusView = null;
 
         // Check for a valid phone.
-        if (TextUtils.isEmpty(phone)) {
+        if (TextUtils.isEmpty(phone) || AppUtils.isPhoneValid(phone)) {
             showToast(R.string.error_invalid_phone, Toast.LENGTH_SHORT);
             focusView = mPhoneView;
             cancel = true;
@@ -191,14 +197,32 @@ public class LoginActivity extends BaseActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-//            mAuthTask = new UserLoginTask(email, password);
-//            mAuthTask.execute((Void) null);
+            doLogin(phone, password);
         }
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
         return password.length() > 4;
+    }
+
+    //执行异步登录
+    private void doLogin(String phone, String password) {
+        ApiUser.asyncLogin(phone, password, new HttpResponse<User>() {
+            @Override
+            public void onSuccess(User response) {
+                showProgress(false);
+                //进入主页
+                Intent intent = new Intent(LoginActivity.this, null);
+                LoginActivity.this.startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onError(Call request, Exception e) {
+                showProgress(false);
+
+            }
+        });
     }
 
     /**
