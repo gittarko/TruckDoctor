@@ -1,16 +1,16 @@
 <resources>
     <string name="app_name">卡车医生</string>
-
+    <string name="label_app_name">卡司科技技师端</string>
+    <string name="product_feature">正品保障 价格透明 上门服务</string>
     <!-- Strings related to login -->
     <string name="prompt_phone">请输入手机号</string>
     <string name="prompt_password">请输入密码</string>
     <string name="action_login">登录</string>
     <string name="action_sign_in_short">登录</string>
     <string name="prompt_forget_password">登录遇到困难?</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
+    <string name="error_invalid_phone">账号非法或输入错误</string>
+    <string name="error_invalid_password">密码非法或输入错误</string>
+    <string name="error_incorrect_login">无该账号</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>

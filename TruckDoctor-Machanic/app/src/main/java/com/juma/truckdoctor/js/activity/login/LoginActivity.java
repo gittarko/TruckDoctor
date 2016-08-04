@@ -31,6 +31,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.juma.truckdoctor.js.R;
 import com.juma.truckdoctor.js.api.Api;
@@ -72,7 +73,6 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initLayoutView() {
         super.initLayoutView();
-        initToolBar();
         // Set up the login form.
         mPhoneView = (AutoCompleteTextView) findViewById(R.id.phone);
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -111,10 +111,6 @@ public class LoginActivity extends BaseActivity {
         return TITLE_CENTER;
     }
 
-    @Override
-    protected int getNavigationIcon() {
-        return R.mipmap.ic_arrow_back_white;
-    }
 
     @Override
     protected OnClickListener getNavigationClickListener() {
@@ -132,9 +128,9 @@ public class LoginActivity extends BaseActivity {
      */
     private void attemptPopUpWindow() {
         builder = new PopUpWindowAlertDialog.Builder(this);
-        builder.setTitle(getResources().getString(R.string.label_contact), 18)
+        builder.setTitle(getResources().getString(R.string.label_contact), 16)
         .setMessage(Api.Customer_Service_Phone + "\n" +
-                getResources().getString(R.string.label_contact_descripton), 16)
+                getResources().getString(R.string.label_contact_descripton), 14)
         .setPositiveButton(getResources().getString(R.string.action_call_phone),
                 new DialogInterface.OnClickListener() {
 
@@ -167,27 +163,23 @@ public class LoginActivity extends BaseActivity {
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mPhoneView.getText().toString();
+        String phone = mPhoneView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
+        // Check for a valid phone.
+        if (TextUtils.isEmpty(phone)) {
+            showToast(R.string.error_invalid_phone, Toast.LENGTH_SHORT);
+            focusView = mPhoneView;
             cancel = true;
         }
 
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mPhoneView.setError(getString(R.string.error_field_required));
-            focusView = mPhoneView;
-            cancel = true;
-        } else if (!isEmailValid(email)) {
-            mPhoneView.setError(getString(R.string.error_invalid_email));
-            focusView = mPhoneView;
+        // Check for a valid password, if the user entered one.
+        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+            showToast(R.string.error_invalid_password, Toast.LENGTH_SHORT);
+            focusView = mPasswordView;
             cancel = true;
         }
 
@@ -202,11 +194,6 @@ public class LoginActivity extends BaseActivity {
 //            mAuthTask = new UserLoginTask(email, password);
 //            mAuthTask.execute((Void) null);
         }
-    }
-
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
