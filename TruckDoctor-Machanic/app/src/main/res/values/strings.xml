@@ -1,11 +1,12 @@
 <resources>
-    <string name="app_name">app</string>
+    <string name="app_name">卡车医生</string>
 
     <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (optional)</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
+    <string name="prompt_phone">请输入手机号</string>
+    <string name="prompt_password">请输入密码</string>
+    <string name="action_login">登录</string>
+    <string name="action_sign_in_short">登录</string>
+    <string name="prompt_forget_password">登录遇到困难?</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
@@ -13,4 +14,10 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+
+    <string name="label_contact">联系客服</string>
+    <string name="label_contact_descripton">4009922107\n登录遇到困难,联系客服</string>
+    <string name="action_cancel">取消</string>
+    <string name="action_call_phone">确认拨打</string>
+
 </resources>

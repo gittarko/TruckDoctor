@@ -42,6 +42,8 @@ public class PopUpWindowAlertDialog extends Dialog {
                 positiveButtonTextSize, negativeButtonTextSize;
 
         private View contentView;
+        private PopUpWindowAlertDialog dialog;
+
         private OnClickListener positiveButtonClickListener;
         private OnClickListener negativeButtonClickListener;
 
@@ -137,7 +139,7 @@ public class PopUpWindowAlertDialog extends Dialog {
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             //自定义透明背景的弹出窗
-            final PopUpWindowAlertDialog dialog = new PopUpWindowAlertDialog(context,
+            dialog = new PopUpWindowAlertDialog(context,
                     R.style.my_dialog);
             View layout = inflater.inflate(R.layout.popup_alert_dialog, null);
             dialog.addContentView(layout, new ViewGroup.LayoutParams(
@@ -208,19 +210,33 @@ public class PopUpWindowAlertDialog extends Dialog {
             }
 
             dialog.setContentView(layout);
-            show(dialog);
+            PopUpWindowAlertDialog.show(dialog);
+
             return dialog;
+        }
+
+        public void show() {
+            if(!dialog.isShowing()) {
+                dialog.show();
+            }
+        }
+
+        public void dimiss() {
+            dialog.dismiss();
         }
 
     }
 
     //显示弹出窗口
     public static void show(PopUpWindowAlertDialog dialog) {
-        dialog.show();
-        Window window = dialog.getWindow();
-        WindowManager.LayoutParams params = window.getAttributes();
-        params.width = AppUtils.getWindowWidth(dialog.getContext());
-        params.height = AppUtils.getWindowHeight(dialog.getContext());
-        window.setAttributes(params);
+        if(!dialog.isShowing()) {
+            dialog.show();
+            Window window = dialog.getWindow();
+            WindowManager.LayoutParams params = window.getAttributes();
+            params.width = AppUtils.getWindowWidth(dialog.getContext());
+            params.height = AppUtils.getWindowHeight(dialog.getContext());
+            window.setAttributes(params);
+        }
     }
+
 }
