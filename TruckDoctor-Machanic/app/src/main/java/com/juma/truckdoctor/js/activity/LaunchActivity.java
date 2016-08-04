@@ -45,6 +45,7 @@ public class LaunchActivity extends BaseActivity {
             loginIntent.setData(Uri.parse(Api.getUrl()));
             loginIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(loginIntent);
+            finish();
         }
     }
 

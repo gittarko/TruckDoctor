@@ -16,8 +16,8 @@ public final class SystemParamUtil {
     public static final String ENV_TEST = "test";
     public static final String ENV_OFFICIAL = "official";
 
-    public static final String APP_MACHANIC = "js";
-    public static final String APP_DRIVER = "sj";
+    public static final String APP_MACHANIC = "machanic";
+    public static final String APP_DRIVER = "driver";
 
     private static String paramEnv;
     private static String paramApp;
