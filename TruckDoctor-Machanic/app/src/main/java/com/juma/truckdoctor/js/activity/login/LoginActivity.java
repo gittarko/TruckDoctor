@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -19,6 +20,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -31,6 +33,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.juma.truckdoctor.js.R;
+import com.juma.truckdoctor.js.api.Api;
+import com.juma.truckdoctor.js.base.BaseActivity;
 import com.juma.truckdoctor.js.utils.AppUtils;
 import com.juma.truckdoctor.js.widget.PopUpWindowAlertDialog;
 
@@ -45,8 +49,8 @@ import static android.Manifest.permission.READ_CONTACTS;
  * 登录界面
  *
  */
-public class LoginActivity extends AppCompatActivity{
-
+public class LoginActivity extends BaseActivity {
+    private static final String TITLE_CENTER = "登录";
     // UI references.
     private AutoCompleteTextView mPhoneView;
     private EditText mPasswordView;
@@ -58,7 +62,17 @@ public class LoginActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+    }
+
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.activity_login;
+    }
+
+    @Override
+    protected void initLayoutView() {
+        super.initLayoutView();
+        initToolBar();
         // Set up the login form.
         mPhoneView = (AutoCompleteTextView) findViewById(R.id.phone);
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -92,6 +106,26 @@ public class LoginActivity extends AppCompatActivity{
         mProgressView = findViewById(R.id.login_progress);
     }
 
+    @Override
+    public String getTitleCenter() {
+        return TITLE_CENTER;
+    }
+
+    @Override
+    protected int getNavigationIcon() {
+        return R.mipmap.ic_arrow_back_white;
+    }
+
+    @Override
+    protected OnClickListener getNavigationClickListener() {
+        return new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        };
+    }
+
     PopUpWindowAlertDialog.Builder builder;
     /**
      * 登录遇到困难,触发弹窗允许用户联系客服协助解决登录问题
@@ -99,15 +133,15 @@ public class LoginActivity extends AppCompatActivity{
     private void attemptPopUpWindow() {
         builder = new PopUpWindowAlertDialog.Builder(this);
         builder.setTitle(getResources().getString(R.string.label_contact), 18)
-        .setMessage(getResources().getString(R.string.label_contact_descripton), 16)
+        .setMessage(Api.Customer_Service_Phone + "\n" +
+                getResources().getString(R.string.label_contact_descripton), 16)
         .setPositiveButton(getResources().getString(R.string.action_call_phone),
                 new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //调起电话拨打界面
-                String number = mPhoneView.getText().toString().trim();
-                AppUtils.getPhoneCall(LoginActivity.this, number);
+                AppUtils.getPhoneCall(LoginActivity.this, Api.Customer_Service_Phone);
                 builder.dimiss();
             }
         })

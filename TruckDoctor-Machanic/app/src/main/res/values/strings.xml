@@ -16,7 +16,7 @@
     </string>
 
     <string name="label_contact">联系客服</string>
-    <string name="label_contact_descripton">4009922107\n登录遇到困难,联系客服</string>
+    <string name="label_contact_descripton">登录遇到困难,联系客服</string>
     <string name="action_cancel">取消</string>
     <string name="action_call_phone">确认拨打</string>
 

@@ -25,6 +25,8 @@ public class Api {
     public static final String URL_MACHNIC_TEST = HOST_TEST + "forward/customer/loading.html";
     public static final String URL_MACHNIC_OFFICIAL = HOST_OFFICIAL + "forward/customer/loading.html";
 
+    //客服联系电话
+    public static final String Customer_Service_Phone = "4009922107";
     private static String host;
     private static String payHost;
     private static String urlDriver;
