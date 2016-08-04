@@ -30,38 +30,39 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <android.support.design.widget.TextInputLayout
+            <AutoCompleteTextView
+                android:id="@+id/phone"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="39dp"
+                android:textSize="16sp"
+                android:textColor="@android:color/black"
+                android:hint="@string/prompt_phone"
+                android:textColorHint="@android:color/darker_gray"
+                android:background="@null"
+                android:inputType="numberDecimal"
+                android:maxLines="1"
+                android:singleLine="true" />
 
-                <AutoCompleteTextView
-                    android:id="@+id/phone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_phone"
-                    android:inputType="numberDecimal"
-                    android:maxLines="1"
-                    android:singleLine="true" />
-
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="0.5dp"
+                android:background="#cccccc"/>
 
-                <EditText
-                    android:id="@+id/password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_password"
-                    android:imeActionId="@+id/login"
-                    android:imeActionLabel="@string/action_sign_in_short"
-                    android:imeOptions="actionUnspecified"
-                    android:inputType="textPassword"
-                    android:maxLines="1"
-                    android:singleLine="true" />
-
-            </android.support.design.widget.TextInputLayout>
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="39dp"
+                android:background="@null"
+                android:textSize="16sp"
+                android:textColor="@android:color/black"
+                android:textColorHint="@android:color/darker_gray"
+                android:hint="@string/prompt_password"
+                android:imeActionId="@+id/login"
+                android:imeActionLabel="@string/action_sign_in_short"
+                android:imeOptions="actionUnspecified"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:singleLine="true" />
 
             <Button
                 android:id="@+id/login_button"
@@ -71,7 +72,8 @@
                 android:background="@drawable/roundbackground_blue"
                 android:layout_marginTop="16dp"
                 android:text="@string/action_login"
-                android:textStyle="bold" />
+                android:textSize="16sp"
+                android:textColor="@android:color/white"/>
 
             //忘记密码
             <TextView
@@ -81,6 +83,7 @@
                 android:layout_gravity="right"
                 android:layout_marginTop="16dp"
                 android:text="@string/prompt_forget_password"
+                android:textColor="@android:color/darker_gray"
                 android:textSize="12sp" />
         </LinearLayout>
     </ScrollView>

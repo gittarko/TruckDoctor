@@ -7,6 +7,14 @@
     android:padding="35dp"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/roundbackground_white"
+        android:gravity="center"
+        android:orientation="vertical">
+
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
@@ -54,7 +62,7 @@
             android:layout_width="0dp"
             android:layout_height="45dp"
             android:layout_weight="1"
-            android:background="@null"
+            android:background="@drawable/roundbackground_gray"
             android:gravity="center"
             android:text="取消"
             android:textSize="16sp"
@@ -69,10 +77,12 @@
             android:layout_width="0dp"
             android:layout_height="45dp"
             android:layout_weight="1"
-            android:background="@null"
+            android:background="@drawable/roundbackground_blue"
             android:gravity="center"
             android:text="确认"
+            android:textColor="@color/white"
             android:textSize="16sp" />
+    </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>

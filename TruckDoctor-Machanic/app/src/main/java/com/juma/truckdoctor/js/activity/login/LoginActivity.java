@@ -81,6 +81,7 @@ public class LoginActivity extends AppCompatActivity{
             }
         });
 
+        mForgetPassword = (TextView)findViewById(R.id.forget_password);
         mForgetPassword.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -97,8 +98,8 @@ public class LoginActivity extends AppCompatActivity{
      */
     private void attemptPopUpWindow() {
         builder = new PopUpWindowAlertDialog.Builder(this);
-        builder.setMessage(getResources().getString(R.string.label_contact), 16)
-        .setTitle(getResources().getString(R.string.label_contact_descripton), 18)
+        builder.setTitle(getResources().getString(R.string.label_contact), 16)
+        .setMessage(getResources().getString(R.string.label_contact_descripton), 18)
         .setPositiveButton(getResources().getString(R.string.action_call_phone),
                 new DialogInterface.OnClickListener() {
 
