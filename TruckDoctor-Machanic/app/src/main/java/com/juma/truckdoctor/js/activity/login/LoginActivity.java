@@ -98,8 +98,8 @@ public class LoginActivity extends AppCompatActivity{
      */
     private void attemptPopUpWindow() {
         builder = new PopUpWindowAlertDialog.Builder(this);
-        builder.setTitle(getResources().getString(R.string.label_contact), 16)
-        .setMessage(getResources().getString(R.string.label_contact_descripton), 18)
+        builder.setTitle(getResources().getString(R.string.label_contact), 18)
+        .setMessage(getResources().getString(R.string.label_contact_descripton), 16)
         .setPositiveButton(getResources().getString(R.string.action_call_phone),
                 new DialogInterface.OnClickListener() {
 
