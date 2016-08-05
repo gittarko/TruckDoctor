@@ -103,48 +103,6 @@ public class CacheManager {
     }
 
     /**
-     * 缓存解析或读取线程
-     */
-    public abstract class CacheTask<T> extends AsyncTask<String, Void, T> {
-        private final WeakReference<Context> context;
-
-        private CacheTask(Context context) {
-            this.context = new WeakReference<Context>(context);
-        }
-
-        @Override
-        protected T doInBackground(String... params) {
-            Serializable seri = CacheManager.readObject(context.get(),
-                    params[0]);
-            if (seri == null) {
-                return null;
-            } else {
-                return parseTask(seri);
-            }
-        }
-
-        @Override
-        protected void onPostExecute(T result) {
-            super.onPostExecute(result);
-            parseTaskCallBack(result);
-        }
-
-        /**
-         * 解析数据的业务逻辑由自己实现
-         * 该实现处于线程中
-         * @param serializable
-         * @return
-         */
-        public abstract T parseTask(Serializable serializable);
-
-        /**
-         * 解析数据业务完成
-         * @param result
-         */
-        public abstract void parseTaskCallBack(T result);
-    }
-
-    /**
      * 保存缓存线程
      */
     public class SaveCacheTask extends AsyncTask<Void, Void, Void> {

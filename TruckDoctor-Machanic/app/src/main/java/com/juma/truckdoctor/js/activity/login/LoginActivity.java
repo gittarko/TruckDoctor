@@ -5,23 +5,9 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -37,18 +23,15 @@ import android.widget.Toast;
 import com.juma.truckdoctor.js.R;
 import com.juma.truckdoctor.js.api.Api;
 import com.juma.truckdoctor.js.api.ApiUser;
-import com.juma.truckdoctor.js.api.HttpResponse;
+import com.juma.truckdoctor.js.api.ApiResponse;
 import com.juma.truckdoctor.js.base.BaseActivity;
 import com.juma.truckdoctor.js.model.User;
 import com.juma.truckdoctor.js.utils.AppUtils;
 import com.juma.truckdoctor.js.widget.PopUpWindowAlertDialog;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Call;
-
-import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * @author dong.he
@@ -210,7 +193,7 @@ public class LoginActivity extends BaseActivity {
 
     //执行异步登录
     private void doLogin(String phone, String password) {
-        ApiUser.asyncLogin(phone, password, new HttpResponse<User>() {
+        ApiUser.asyncLogin(phone, password, new ApiResponse<User>() {
             @Override
             public void onSuccess(User response) {
                 showProgress(false);
