@@ -58,6 +58,7 @@
 
         <Button
             android:id="@+id/negativeButton"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_weight="1"
@@ -73,6 +74,7 @@
 
         <Button
             android:id="@+id/positiveButton"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_weight="1"
