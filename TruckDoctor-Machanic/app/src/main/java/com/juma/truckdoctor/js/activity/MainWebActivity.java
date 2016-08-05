@@ -3,11 +3,19 @@ package com.juma.truckdoctor.js.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 
 import com.juma.truckdoctor.js.R;
 import com.juma.truckdoctor.js.base.BaseActivity;
+import com.juma.truckdoctor.js.fragment.BackHandledFragment;
+import com.juma.truckdoctor.js.fragment.BackHandledInterface;
+import com.juma.truckdoctor.js.fragment.BaseWebFragment;
+import com.juma.truckdoctor.js.fragment.OnCurrentFragmentCompleteListener;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -17,15 +25,20 @@ import java.net.URLDecoder;
  * 应用主页
  */
 
-public class MainWebActivity extends BaseActivity {
+public class MainWebActivity extends BaseActivity implements BackHandledInterface, OnCurrentFragmentCompleteListener{
     private static final String TAG = MainWebActivity.class.getSimpleName();
 
     private String url = null;
+    private BackHandledFragment backHandledFragment;
+    private BaseWebFragment baseWebFragment;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        baseWebFragment = BaseWebFragment.newInstance(url);
 
+        start();
     }
 
     @Override
@@ -66,5 +79,51 @@ public class MainWebActivity extends BaseActivity {
 //                url = uriString;
 //            }
 //        }
+    }
+
+    private void start() {
+        FragmentManager fm = getSupportFragmentManager();
+        //使用视频loading页
+//        fm.beginTransaction().add(R.id.content, videoAnimationFragment).commitAllowingStateLoss();
+        //使用普通loading页
+        fm.beginTransaction().replace(R.id.content, baseWebFragment).commitAllowingStateLoss();
+    }
+
+    @Override
+    public void setSelectedFragment(BackHandledFragment selectedFragment) {
+        this.backHandledFragment= selectedFragment;
+    }
+
+    @Override
+    public void onCurrentFragmentComplete(Fragment fragment) {
+
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, final KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (backHandledFragment.onBackPressed()) {
+                return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        baseWebFragment.onActivityRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (baseWebFragment != null) {
+            try {
+                baseWebFragment.getWebChromeClient().onActivityResult(requestCode, resultCode, data);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
