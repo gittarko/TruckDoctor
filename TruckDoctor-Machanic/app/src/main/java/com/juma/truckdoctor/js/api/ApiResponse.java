@@ -6,9 +6,9 @@ import okhttp3.Call;
  * Created by hedong on 16/8/4.
  */
 
-public interface HttpResponse<T> {
+public interface ApiResponse<T> {
     public void onSuccess(T response);
 
-    public void onError(Call request, Exception e);
+    public void onError(Exception e);
 
 }

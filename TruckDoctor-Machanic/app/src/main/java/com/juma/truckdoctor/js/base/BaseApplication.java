@@ -1,6 +1,7 @@
 package com.juma.truckdoctor.js.base;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.juma.truckdoctor.js.api.Api;
 import com.juma.truckdoctor.js.exception.CrashHandler;
@@ -30,6 +31,12 @@ public class BaseApplication extends Application {
         STORAGE_USER_KEY = "truckdoctor_user";
     }
 
+    private static BaseApplication application;
+
+    public static Context getContext() {
+        return application.getApplicationContext();
+    }
+
     public BaseApplication() {
 
     }
@@ -37,6 +44,7 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        application = this;
         //初始化全局异常捕获
         CrashHandler.getInstance().init(this)
                 .setCacheDir(CRASH_DIR);

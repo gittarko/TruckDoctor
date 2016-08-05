@@ -70,8 +70,7 @@ public class CacheManager {
             e.printStackTrace();
             // 反序列化失败 - 删除缓存文件
             if (e instanceof InvalidClassException) {
-                File data = context.getFileStreamPath(key);
-                data.delete();
+                clearCacheData(context, key);
             }
         } finally {
             try {
@@ -103,56 +102,24 @@ public class CacheManager {
     }
 
     /**
-     * 缓存解析或读取线程
+     * 删除缓存文件
+     * @param context
+     * @param key
      */
-    public abstract class CacheTask<T> extends AsyncTask<String, Void, T> {
-        private final WeakReference<Context> context;
-
-        private CacheTask(Context context) {
-            this.context = new WeakReference<Context>(context);
-        }
-
-        @Override
-        protected T doInBackground(String... params) {
-            Serializable seri = CacheManager.readObject(context.get(),
-                    params[0]);
-            if (seri == null) {
-                return null;
-            } else {
-                return parseTask(seri);
-            }
-        }
-
-        @Override
-        protected void onPostExecute(T result) {
-            super.onPostExecute(result);
-            parseTaskCallBack(result);
-        }
-
-        /**
-         * 解析数据的业务逻辑由自己实现
-         * 该实现处于线程中
-         * @param serializable
-         * @return
-         */
-        public abstract T parseTask(Serializable serializable);
-
-        /**
-         * 解析数据业务完成
-         * @param result
-         */
-        public abstract void parseTaskCallBack(T result);
+    public static boolean clearCacheData(Context context, String key) {
+        File data = context.getFileStreamPath(key);
+        return data.delete();
     }
 
     /**
      * 保存缓存线程
      */
-    public class SaveCacheTask extends AsyncTask<Void, Void, Void> {
+    public static class SaveCacheTask extends AsyncTask<Void, Void, Void> {
         private final WeakReference<Context> mContext;
         private final Serializable seri;
         private final String key;
 
-        private SaveCacheTask(Context context, Serializable seri, String key) {
+        public SaveCacheTask(Context context, Serializable seri, String key) {
             mContext = new WeakReference<Context>(context);
             this.seri = seri;
             this.key = key;

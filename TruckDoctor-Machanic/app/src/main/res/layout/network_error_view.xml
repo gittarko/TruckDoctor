@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_background"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_marginTop="73dp"
+        android:src="@drawable/no_network" />
+
+    <TextView
+        android:id="@+id/error_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="@string/network_error_title"
+        android:textColor="@color/text_dark_gray"
+        android:textSize="15sp" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="40dp"
+        android:paddingRight="40dp"
+        android:paddingTop="28dp" >
+
+        <TextView
+            android:id="@+id/network_error_reason_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="@string/network_error_reason_title"
+            android:textColor="@color/text_light_gray_b2"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/network_error_reason"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/network_error_reason_title"
+            android:layout_below="@id/network_error_reason_title"
+            android:text="@string/network_error_reason"
+            android:textColor="@color/text_light_gray_b2"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/refresh_btn"
+        android:layout_width="98dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="28dp"
+        android:background="@drawable/gray_btn_bg_style"
+        android:clickable="true"
+        android:gravity="center"
+        android:text="@string/refresh"
+        android:textColor="@color/text_dark_gray"
+        android:textSize="15sp"
+        android:visibility="visible" />
+
+</LinearLayout>

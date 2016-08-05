@@ -11,6 +11,7 @@
     <string name="error_invalid_phone">手机号非法或输入错误</string>
     <string name="error_invalid_password">密码非法或输入错误</string>
     <string name="error_incorrect_login">无该账号</string>
+    <string name="error_format_phone">不是正确的手机号码格式</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
@@ -19,5 +20,23 @@
     <string name="label_contact_descripton">登录遇到困难,联系客服</string>
     <string name="action_cancel">取消</string>
     <string name="action_call_phone">确认拨打</string>
+
+    <string name="permissin_title">卡车医生需要使用以下权限</string>
+    <string name="permission_msg">使用手机存储\n用于下载，更新应用</string>
+    <string name="permissin_btn">去设置</string>
+
+    <!--版本升级提示-->
+    <string name="update_tips">您有新版本啦，请升级！</string>
+    <string name="update_ok">立即更新</string>
+    <string name="update_cancel">稍后再说</string>
+
+    <!--网络/刷新提示-->
+    <string name="network_error_title">网络出错了</string>
+    <string name="server_error_title">服务出错了</string>
+    <string name="network_error_reason_title">可能原因：</string>
+    <string name="network_error_reason">手机信号弱，WIFI无法连接网络，手机进入飞行模式等</string>
+    <string name="server_error_reason">错误代码：%s，你可将此页面截图联系客服人员</string>
+    <string name="refresh">刷新</string>
+
 
 </resources>

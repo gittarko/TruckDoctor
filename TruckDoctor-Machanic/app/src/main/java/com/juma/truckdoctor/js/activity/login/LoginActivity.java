@@ -5,23 +5,10 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
 
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -35,20 +22,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.juma.truckdoctor.js.R;
+import com.juma.truckdoctor.js.activity.MainWebActivity;
 import com.juma.truckdoctor.js.api.Api;
 import com.juma.truckdoctor.js.api.ApiUser;
-import com.juma.truckdoctor.js.api.HttpResponse;
+import com.juma.truckdoctor.js.api.ApiResponse;
 import com.juma.truckdoctor.js.base.BaseActivity;
 import com.juma.truckdoctor.js.model.User;
 import com.juma.truckdoctor.js.utils.AppUtils;
 import com.juma.truckdoctor.js.widget.PopUpWindowAlertDialog;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Call;
-
-import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * @author dong.he
@@ -72,14 +57,14 @@ public class LoginActivity extends BaseActivity {
     }
 
     @Override
-    protected int getLayoutResId() {
+    public int getLayoutResId() {
         return R.layout.activity_login;
     }
 
     @Override
-    protected void initLayoutView() {
+    public void initLayoutView() {
         super.initLayoutView();
-        // Set up the login form.
+
         mPhoneView = (AutoCompleteTextView) findViewById(R.id.phone);
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -108,6 +93,7 @@ public class LoginActivity extends BaseActivity {
                 attemptPopUpWindow();
             }
         });
+
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
@@ -119,7 +105,7 @@ public class LoginActivity extends BaseActivity {
 
 
     @Override
-    protected OnClickListener getNavigationClickListener() {
+    public OnClickListener getNavigationClickListener() {
         return new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -128,10 +114,12 @@ public class LoginActivity extends BaseActivity {
         };
     }
 
-    PopUpWindowAlertDialog.Builder builder;
+
     /**
      * 登录遇到困难,触发弹窗允许用户联系客服协助解决登录问题
      */
+
+    PopUpWindowAlertDialog.Builder builder;
     private void attemptPopUpWindow() {
         builder = new PopUpWindowAlertDialog.Builder(this);
         builder.setTitle(getResources().getString(R.string.label_contact), 16)
@@ -145,6 +133,7 @@ public class LoginActivity extends BaseActivity {
                 //调起电话拨打界面
                 AppUtils.getPhoneCall(LoginActivity.this, Api.Customer_Service_Phone);
                 builder.dimiss();
+                builder = null;
             }
         })
         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -159,12 +148,9 @@ public class LoginActivity extends BaseActivity {
 
 
     /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
+     * 开始登录操作
      */
     private void attemptLogin() {
-        // Reset errors.
         mPhoneView.setError(null);
         mPasswordView.setError(null);
 
@@ -175,14 +161,14 @@ public class LoginActivity extends BaseActivity {
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid phone.
+        //检查手机号输入合法性
         if (TextUtils.isEmpty(phone) || AppUtils.isPhoneValid(phone)) {
             showToast(R.string.error_invalid_phone, Toast.LENGTH_SHORT);
             focusView = mPhoneView;
             cancel = true;
         }
 
-        // Check for a valid password, if the user entered one.
+        // 检查密码输入合法性
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             showToast(R.string.error_invalid_password, Toast.LENGTH_SHORT);
             focusView = mPasswordView;
@@ -190,39 +176,55 @@ public class LoginActivity extends BaseActivity {
         }
 
         if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
+            //手机号或密码输入不合法,焦点定位到错误栏
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
+            //登录前显示加载等待效果,然后执行登录
             showProgress(true);
             doLogin(phone, password);
         }
     }
 
+    /**
+     * 检查密码长度是否符合规则,暂定要求密码长度4个字符以上
+     * @param password  密码
+     * @return
+     */
     private boolean isPasswordValid(String password) {
         return password.length() > 4;
     }
 
     //执行异步登录
     private void doLogin(String phone, String password) {
-        ApiUser.asyncLogin(phone, password, new HttpResponse<User>() {
+        ApiUser.asyncLogin(phone, password, new ApiResponse<User>() {
             @Override
             public void onSuccess(User response) {
                 showProgress(false);
-                //进入主页
-                Intent intent = new Intent(LoginActivity.this, null);
-                LoginActivity.this.startActivity(intent);
-                finish();
+                showToast("登录成功", Toast.LENGTH_SHORT);
+                forwardHome();
             }
 
             @Override
-            public void onError(Call request, Exception e) {
+            public void onError(Exception e) {
                 showProgress(false);
-
+                String msg = e.getMessage();
+                showToast(msg, Toast.LENGTH_SHORT);
             }
         });
+    }
+
+    //跳转至应用首页
+    private void forwardHome() {
+        mLoginFormView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(LoginActivity.this, MainWebActivity.class);
+                intent.setData(getIntent().getData());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                LoginActivity.this.startActivity(intent);
+                finish();
+            }
+        }, 1000);//延时1s执行
     }
 
     /**
@@ -260,6 +262,7 @@ public class LoginActivity extends BaseActivity {
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
+
 
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
