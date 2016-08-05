@@ -24,6 +24,7 @@
             android:name="app"
             android:value="${app}" />
 
+        <!--应用启动界面-->
         <activity android:name=".activity.LaunchActivity"
             android:launchMode="singleTask"
             >
@@ -33,11 +34,19 @@
             </intent-filter>
         </activity>
 
+        <!--登录界面-->
         <activity
             android:name=".activity.login.LoginActivity"
             android:label="@string/action_login" android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize">
         </activity>
+
+        <!--应用主页-->
+        <activity android:name=".activity.MainWebActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop"/>
+
     </application>
 
 </manifest>

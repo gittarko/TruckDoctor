@@ -19,7 +19,7 @@ import com.juma.truckdoctor.js.utils.CacheManager;
 
 public class LaunchActivity extends BaseActivity {
     @Override
-    protected int getLayoutResId() {
+    public int getLayoutResId() {
         return 0;
     }
 
@@ -36,15 +36,19 @@ public class LaunchActivity extends BaseActivity {
      */
     private void checkLoginUser() {
         String cacheUser = BaseApplication.STORAGE_USER_KEY;
+        Intent intent = null;
         if(CacheManager.isExistDataCache(this, cacheUser)) {
             //存在登录用户
-//            Intent homeIntent = new Intent(this,)
+            intent = new Intent(this, MainWebActivity.class);
         }else {
             //跳转至登录
-            Intent loginIntent = new Intent(this, LoginActivity.class);
-            loginIntent.setData(Uri.parse(Api.getUrl()));
-            loginIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            startActivity(loginIntent);
+            intent = new Intent(this, LoginActivity.class);
+        }
+
+        if(intent != null) {
+            intent.setData(Uri.parse(Api.getUrl()));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
             finish();
         }
     }

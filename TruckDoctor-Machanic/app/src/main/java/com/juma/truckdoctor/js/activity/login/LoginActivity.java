@@ -72,12 +72,12 @@ public class LoginActivity extends BaseActivity {
     }
 
     @Override
-    protected int getLayoutResId() {
+    public int getLayoutResId() {
         return R.layout.activity_login;
     }
 
     @Override
-    protected void initLayoutView() {
+    public void initLayoutView() {
         super.initLayoutView();
 
         mPhoneView = (AutoCompleteTextView) findViewById(R.id.phone);
@@ -120,7 +120,7 @@ public class LoginActivity extends BaseActivity {
 
 
     @Override
-    protected OnClickListener getNavigationClickListener() {
+    public OnClickListener getNavigationClickListener() {
         return new OnClickListener() {
             @Override
             public void onClick(View view) {
