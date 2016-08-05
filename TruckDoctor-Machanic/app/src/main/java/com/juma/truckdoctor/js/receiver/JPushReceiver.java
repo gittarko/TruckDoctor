@@ -6,10 +6,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.juma.truckdoctor.js.manager.SoundPoolManager;
+
+import org.json.JSONObject;
+
+import java.util.Iterator;
 
 import cn.jpush.android.api.JPushInterface;
 
@@ -66,10 +67,12 @@ public class JPushReceiver extends BroadcastReceiver {
                 }
                 sb.append("\nkey:" + key + ", value: " + bundle.getString(JPushInterface.EXTRA_EXTRA));
                 try {
-                    JSONObject json = JSON.parseObject(bundle.getString(JPushInterface.EXTRA_EXTRA));
-                    for (String myKey : json.keySet()) {
+                    JSONObject json = new JSONObject(bundle.getString(JPushInterface.EXTRA_EXTRA));
+                    Iterator iter = json.keys();
+                    while(iter.hasNext()) {
+                        String keys = (String)iter.next();
                         sb.append("\nkey:" + key + ", value: [" +
-                                myKey + " - " + json.getString(myKey).toString() + "]");
+                                keys + " - " + json.getString(keys) + "]");
                     }
                 } catch (Exception e) {
                     Log.e(TAG, "Get message extra JSON error!");
@@ -84,9 +87,9 @@ public class JPushReceiver extends BroadcastReceiver {
     private void onNotificationReceived(Context context, Bundle bundle) {
         if (bundle.containsKey(JPushInterface.EXTRA_EXTRA)) {
             try {
-                JSONObject json = JSON.parseObject(bundle.getString(JPushInterface.EXTRA_EXTRA));
-                if (json.containsKey("playsound")) {
-                    int index = json.getIntValue("playsound");
+                JSONObject json = new JSONObject(bundle.getString(JPushInterface.EXTRA_EXTRA));
+                if (json.has("playsound")) {
+                    int index = json.getInt("playsound");
                     SoundPoolManager.getSoundPoolManager(context).playNotificationSound(index - 1);
                 }
             } catch (Exception e) {
@@ -97,8 +100,8 @@ public class JPushReceiver extends BroadcastReceiver {
     private void onNotificationOpend(Context context, Bundle bundle) {
         if (bundle.containsKey(JPushInterface.EXTRA_EXTRA)) {
             try {
-                JSONObject json = JSON.parseObject(bundle.getString(JPushInterface.EXTRA_EXTRA));
-                if (json.containsKey("link")) {
+                JSONObject json = new JSONObject(bundle.getString(JPushInterface.EXTRA_EXTRA));
+                if (json.has("link")) {
                     String url = json.getString("link");
                     Intent intent = new Intent();
                     intent.setData(Uri.parse(url));

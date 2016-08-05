@@ -1,16 +1,17 @@
 package com.juma.truckdoctor.js.api;
 
 import android.content.Context;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 import com.juma.truckdoctor.js.base.BaseApplication;
 import com.juma.truckdoctor.js.model.User;
 import com.juma.truckdoctor.js.utils.CacheManager;
 import com.juma.truckdoctor.js.utils.CacheTask;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 
@@ -71,17 +72,21 @@ public class ApiUser {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        JSONObject jsonObject = JSON.parseObject(response);
-                        if(jsonObject.getIntValue("code") == 0) {
-                            User user = JSON.parseObject(jsonObject.getString("dat"), User.class);
-                            //保存用户信息
-                            new CacheManager.SaveCacheTask(BaseApplication.getContext(), user,
-                                    BaseApplication.STORAGE_USER_KEY).execute();
-                            //回调用户信息
-                            callback.onSuccess(user);
-                        }else {
-                            //账号异常
-                            callback.onError(new Exception(jsonObject.getString("message")));
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            if (jsonObject.getInt("code") == 0) {
+                                User user = new Gson().fromJson(jsonObject.getString("data"), User.class);
+                                //保存用户信息
+                                new CacheManager.SaveCacheTask(BaseApplication.getContext(), user,
+                                        BaseApplication.STORAGE_USER_KEY).execute();
+                                //回调用户信息
+                                callback.onSuccess(user);
+                            } else {
+                                //账号异常
+                                callback.onError(new Exception(jsonObject.getString("message")));
+                            }
+                        }catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     }
                 });
