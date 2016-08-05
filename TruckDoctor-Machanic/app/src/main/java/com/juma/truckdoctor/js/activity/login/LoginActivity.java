@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
 
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.juma.truckdoctor.js.R;
+import com.juma.truckdoctor.js.activity.MainWebActivity;
 import com.juma.truckdoctor.js.api.Api;
 import com.juma.truckdoctor.js.api.ApiUser;
 import com.juma.truckdoctor.js.api.ApiResponse;
@@ -131,6 +133,7 @@ public class LoginActivity extends BaseActivity {
                 //调起电话拨打界面
                 AppUtils.getPhoneCall(LoginActivity.this, Api.Customer_Service_Phone);
                 builder.dimiss();
+                builder = null;
             }
         })
         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -197,18 +200,31 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onSuccess(User response) {
                 showProgress(false);
-                //进入主页
-                Intent intent = new Intent(LoginActivity.this, null);
-                LoginActivity.this.startActivity(intent);
-                finish();
+                showToast("登录成功", Toast.LENGTH_SHORT);
+                forwardHome();
             }
 
             @Override
-            public void onError(Call request, Exception e) {
+            public void onError(Exception e) {
                 showProgress(false);
-
+                String msg = e.getMessage();
+                showToast(msg, Toast.LENGTH_SHORT);
             }
         });
+    }
+
+    //跳转至应用首页
+    private void forwardHome() {
+        mLoginFormView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(LoginActivity.this, MainWebActivity.class);
+                intent.setData(getIntent().getData());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                LoginActivity.this.startActivity(intent);
+                finish();
+            }
+        }, 1000);//延时1s执行
     }
 
     /**

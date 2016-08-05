@@ -70,8 +70,7 @@ public class CacheManager {
             e.printStackTrace();
             // 反序列化失败 - 删除缓存文件
             if (e instanceof InvalidClassException) {
-                File data = context.getFileStreamPath(key);
-                data.delete();
+                clearCacheData(context, key);
             }
         } finally {
             try {
@@ -103,14 +102,24 @@ public class CacheManager {
     }
 
     /**
+     * 删除缓存文件
+     * @param context
+     * @param key
+     */
+    public static boolean clearCacheData(Context context, String key) {
+        File data = context.getFileStreamPath(key);
+        return data.delete();
+    }
+
+    /**
      * 保存缓存线程
      */
-    public class SaveCacheTask extends AsyncTask<Void, Void, Void> {
+    public static class SaveCacheTask extends AsyncTask<Void, Void, Void> {
         private final WeakReference<Context> mContext;
         private final Serializable seri;
         private final String key;
 
-        private SaveCacheTask(Context context, Serializable seri, String key) {
+        public SaveCacheTask(Context context, Serializable seri, String key) {
             mContext = new WeakReference<Context>(context);
             this.seri = seri;
             this.key = key;

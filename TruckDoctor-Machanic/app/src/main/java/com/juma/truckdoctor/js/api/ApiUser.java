@@ -2,9 +2,12 @@ package com.juma.truckdoctor.js.api;
 
 import android.content.Context;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.juma.truckdoctor.js.base.BaseApplication;
 import com.juma.truckdoctor.js.model.User;
+import com.juma.truckdoctor.js.utils.CacheManager;
 import com.juma.truckdoctor.js.utils.CacheTask;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -46,9 +49,15 @@ public class ApiUser {
         }.execute(BaseApplication.STORAGE_USER_KEY);
     }
 
+    /**
+     * 异步执行登录
+     * @param phone     手机
+     * @param password  密码
+     * @param callback  请求回调
+     */
     public static void asyncLogin(String phone, String password,
                                   final ApiResponse<User> callback) {
-        String url = Api.getUrl() + "";
+        final String url = Api.getUrl() + "";
         OkHttpUtils.post()
                 .url(url)
                 .addParams("phone", phone)
@@ -62,8 +71,18 @@ public class ApiUser {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        User user = new Gson().fromJson(response, User.class);
-                        callback.onSuccess(user);
+                        JSONObject jsonObject = JSON.parseObject(response);
+                        if(jsonObject.getIntValue("code") == 0) {
+                            User user = JSON.parseObject(jsonObject.getString("dat"), User.class);
+                            //保存用户信息
+                            new CacheManager.SaveCacheTask(BaseApplication.getContext(), user,
+                                    BaseApplication.STORAGE_USER_KEY).execute();
+                            //回调用户信息
+                            callback.onSuccess(user);
+                        }else {
+                            //账号异常
+                            callback.onError(new Exception(jsonObject.getString("message")));
+                        }
                     }
                 });
     }
