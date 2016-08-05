@@ -79,7 +79,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initLayoutView() {
         super.initLayoutView();
-        // Set up the login form.
+
         mPhoneView = (AutoCompleteTextView) findViewById(R.id.phone);
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -108,6 +108,7 @@ public class LoginActivity extends BaseActivity {
                 attemptPopUpWindow();
             }
         });
+
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
@@ -128,10 +129,12 @@ public class LoginActivity extends BaseActivity {
         };
     }
 
-    PopUpWindowAlertDialog.Builder builder;
+
     /**
      * 登录遇到困难,触发弹窗允许用户联系客服协助解决登录问题
      */
+
+    PopUpWindowAlertDialog.Builder builder;
     private void attemptPopUpWindow() {
         builder = new PopUpWindowAlertDialog.Builder(this);
         builder.setTitle(getResources().getString(R.string.label_contact), 16)
@@ -159,12 +162,9 @@ public class LoginActivity extends BaseActivity {
 
 
     /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
+     * 开始登录操作
      */
     private void attemptLogin() {
-        // Reset errors.
         mPhoneView.setError(null);
         mPasswordView.setError(null);
 
@@ -175,14 +175,14 @@ public class LoginActivity extends BaseActivity {
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid phone.
+        //检查手机号输入合法性
         if (TextUtils.isEmpty(phone) || AppUtils.isPhoneValid(phone)) {
             showToast(R.string.error_invalid_phone, Toast.LENGTH_SHORT);
             focusView = mPhoneView;
             cancel = true;
         }
 
-        // Check for a valid password, if the user entered one.
+        // 检查密码输入合法性
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             showToast(R.string.error_invalid_password, Toast.LENGTH_SHORT);
             focusView = mPasswordView;
@@ -190,17 +190,20 @@ public class LoginActivity extends BaseActivity {
         }
 
         if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
+            //手机号或密码输入不合法,焦点定位到错误栏
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
+            //登录前显示加载等待效果,然后执行登录
             showProgress(true);
             doLogin(phone, password);
         }
     }
 
+    /**
+     * 检查密码长度是否符合规则,暂定要求密码长度4个字符以上
+     * @param password  密码
+     * @return
+     */
     private boolean isPasswordValid(String password) {
         return password.length() > 4;
     }
@@ -260,6 +263,7 @@ public class LoginActivity extends BaseActivity {
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
+
 
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.

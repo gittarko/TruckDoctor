@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.widget.Toast;
 
+import com.juma.truckdoctor.js.R;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,13 +47,14 @@ public class AppUtils {
             Intent intent=new Intent("android.intent.action.CALL", Uri.parse("tel:"+phoneNum));
             context.startActivity(intent);
         }else{
-            Toast.makeText(context, "号码格式错误",Toast.LENGTH_LONG).show();
+            Toast.makeText(context, context.getResources().getString(R.string.error_format_phone),
+                    Toast.LENGTH_LONG).show();
         }
     }
 
     /**
      * 检查是否是手机号格式
-     * @param phoneNum
+     * @param phoneNum 手机号码
      */
     public static boolean isPhoneValid(String phoneNum) {
         Pattern p = Pattern.compile("\\d+?");
@@ -60,6 +63,7 @@ public class AppUtils {
         if(match.matches()){
             return true;
         }
+
         return false;
     }
 
