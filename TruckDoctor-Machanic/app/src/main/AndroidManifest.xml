@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <!--拨打电话权限-->
     <uses-permission android:name="android.permission.CALL_PHONE"/>
-
+    <uses-permission android:name="android.permission.GET_TASKS"/>
     <!-- JPush -->
     <!-- Required 自定义用来收发消息的相关权限 -->
     <permission

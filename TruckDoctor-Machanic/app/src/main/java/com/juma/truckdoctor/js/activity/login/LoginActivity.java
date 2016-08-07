@@ -29,6 +29,7 @@ import com.juma.truckdoctor.js.api.ApiResponse;
 import com.juma.truckdoctor.js.base.BaseActivity;
 import com.juma.truckdoctor.js.model.User;
 import com.juma.truckdoctor.js.utils.AppUtils;
+import com.juma.truckdoctor.js.utils.RegularUtils;
 import com.juma.truckdoctor.js.widget.PopUpWindowAlertDialog;
 
 import java.util.List;
@@ -162,7 +163,7 @@ public class LoginActivity extends BaseActivity {
         View focusView = null;
 
         //检查手机号输入合法性
-        if (TextUtils.isEmpty(phone) || AppUtils.isPhoneValid(phone)) {
+        if (TextUtils.isEmpty(phone) || RegularUtils.isMobileExact(phone)) {
             showToast(R.string.error_invalid_phone, Toast.LENGTH_SHORT);
             focusView = mPhoneView;
             cancel = true;
