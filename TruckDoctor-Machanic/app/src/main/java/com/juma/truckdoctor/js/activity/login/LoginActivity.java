@@ -119,7 +119,6 @@ public class LoginActivity extends BaseActivity {
     /**
      * 登录遇到困难,触发弹窗允许用户联系客服协助解决登录问题
      */
-
     PopUpWindowAlertDialog.Builder builder;
     private void attemptPopUpWindow() {
         builder = new PopUpWindowAlertDialog.Builder(this);
@@ -187,15 +186,21 @@ public class LoginActivity extends BaseActivity {
     }
 
     /**
-     * 检查密码长度是否符合规则,暂定要求密码长度4个字符以上
+     * <p>
+     * 检查密码输入是否符合规则,可输入数字，英文字母
+     * 密码长度6个字符以上
+     * </p>
      * @param password  密码
-     * @return
      */
     private boolean isPasswordValid(String password) {
-        return password.length() > 4;
+        return password.length() > 6;
     }
 
-    //执行异步登录
+    /**
+     * 执行异步登录
+     * @param phone 手机号
+     * @param password 登录密码
+     */
     private void doLogin(String phone, String password) {
         ApiUser.asyncLogin(phone, password, new ApiResponse<User>() {
             @Override
@@ -275,4 +280,3 @@ public class LoginActivity extends BaseActivity {
     }
 
 }
-
