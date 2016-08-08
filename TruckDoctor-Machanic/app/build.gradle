@@ -4,7 +4,7 @@ android {
     compileSdkVersion 24
     buildToolsVersion "24.0.1"
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 21
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
@@ -51,7 +51,7 @@ android {
             manifestPlaceholders = [env             : "dev",
                                     app             : "machanic",
                                     app_name        : "@string/app_name",
-                                    icon_img        : "@mipmap/ic_launcher",
+                                    icon_img        : "@drawable/app_icon_machanic",
                                     JPUSH_APP_KEY   : "7f9b6370d3bd0ebab200f6e9",
                                     GETUI_APP_ID    : "hsp51sH19N6CtUD1SEPBk7",
                                     GETUI_APP_KEY   : "69UjWs2xSW63vNxJgzGse6",
@@ -66,7 +66,7 @@ android {
             manifestPlaceholders = [env             : "test",
                                     app             : "machanic",
                                     app_name        : "@string/app_name",
-                                    icon_img        : "@mipmap/ic_launcher",
+                                    icon_img        : "@drawable/app_icon_machanic",
                                     JPUSH_APP_KEY   : "7f9b6370d3bd0ebab200f6e9",
                                     GETUI_APP_ID    : "hsp51sH19N6CtUD1SEPBk7",
                                     GETUI_APP_KEY   : "69UjWs2xSW63vNxJgzGse6",
@@ -81,7 +81,7 @@ android {
             manifestPlaceholders = [env             : "official",
                                     app             : "machanic",
                                     app_name        : "@string/app_name",
-                                    icon_img        : "@mipmap/ic_launcher",
+                                    icon_img        : "@drawable/app_icon_machanic",
                                     JPUSH_APP_KEY   : "7f9b6370d3bd0ebab200f6e9",
                                     GETUI_APP_ID    : "hsp51sH19N6CtUD1SEPBk7",
                                     GETUI_APP_KEY   : "69UjWs2xSW63vNxJgzGse6",
