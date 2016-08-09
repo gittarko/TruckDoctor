@@ -50,18 +50,15 @@ import butterknife.OnClick;
 public class LoginActivity extends BaseActivity {
     private static final String TITLE_CENTER = "登录";
 
-    @BindView(R.id.login_progress)
-    ProgressBar mProgressView;
-
     @BindView(R.id.phone)
     AutoCompleteTextView mPhoneView;        //手机号
-//    @BindView(R.id.password)
-//    EditText mPasswordView;                 //密码
+    @BindView(R.id.password)
+    EditText mPasswordView;                 //密码
 
     @BindView(R.id.ll_password_login)
     LinearLayout mLayoutPwd;
-//    @BindView(R.id.verify_code)
-//    EditText mVerifyCode;                   //验证码
+    @BindView(R.id.verify_code)
+    EditText mVerifyCode;                   //验证码
 
     @BindView(R.id.verify_code_button)
     Button mVerifyCodeBtn;                  //获取验证码
@@ -124,16 +121,16 @@ public class LoginActivity extends BaseActivity {
         super.initLayoutView();
         ButterKnife.bind(this);
 
-//        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//            @Override
-//            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-//                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-//                    attemptLogin();
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
+        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                if (id == R.id.login || id == EditorInfo.IME_NULL) {
+                    attemptLogin();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         updateLoginType();
     }
@@ -146,12 +143,12 @@ public class LoginActivity extends BaseActivity {
         if (type == LoginType.ACCOUNT_LOGIN) {
             mLayoutSms.setVisibility(View.GONE);
             mLayoutPwd.setVisibility(View.VISIBLE);
-//            mVerifyCode.setText("");
+            mVerifyCode.setText("");
             mLoginSwitch.setText(R.string.label_sms_login);
         } else {
             mLayoutSms.setVisibility(View.VISIBLE);
             mLayoutPwd.setVisibility(View.GONE);
-//            mPasswordView.setText("");
+            mPasswordView.setText("");
             mLoginSwitch.setText(R.string.label_pwd_login);
         }
     }
@@ -210,7 +207,7 @@ public class LoginActivity extends BaseActivity {
      */
     private void attemptLogin() {
         mPhoneView.setError(null);
-//        mPasswordView.setError(null);
+        mPasswordView.setError(null);
 
         boolean cancel = false;
         View focusView = null;
@@ -225,17 +222,17 @@ public class LoginActivity extends BaseActivity {
         }
 
         if (type == LoginType.ACCOUNT_LOGIN) {
-//            password = mPasswordView.getText().toString();
+            password = mPasswordView.getText().toString();
             // 检查密码输入合法性
             if (!isPasswordValid(password)) {
-//                focusView = mPasswordView;
+                focusView = mPasswordView;
                 cancel = true;
             }
         } else {
-//            password = mVerifyCode.getText().toString();
+            password = mVerifyCode.getText().toString();
             //检测验证码是否为空
             if (!isVerifyCodeValid(password)) {
-//                focusView = mVerifyCode;
+                focusView = mVerifyCode;
                 cancel = true;
             }
         }
@@ -258,7 +255,7 @@ public class LoginActivity extends BaseActivity {
      */
     private boolean isVerifyCodeValid(String password) {
         if (TextUtils.isEmpty(password)) {
-//            mVerifyCode.setError(getResources().getString(R.string.error_empty_code));
+            mVerifyCode.setError(getResources().getString(R.string.error_empty_code));
             return false;
         }
 
@@ -305,8 +302,7 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onSuccess(User response) {
                 showProgress(false);
-                showToast("登录成功", Toast.LENGTH_SHORT);
-//                forwardHome();
+                forwardHome();
             }
 
             @Override
@@ -346,34 +342,10 @@ public class LoginActivity extends BaseActivity {
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+        if(show) {
+            showProgressDialog();
+        }else {
+            dismissProgressDialog();
         }
     }
 

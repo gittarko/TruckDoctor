@@ -123,12 +123,15 @@ public class BaseWebFragment extends BackHandledFragment implements View.OnClick
         mRefreshButton.setVisibility(View.VISIBLE);
         mRefreshButton.setOnClickListener(this);
         mPageLoading = webContent.findViewById(R.id.loadingProgressBar);
-        if (TextUtils.isEmpty(uriString)) {
-            getActivity().finish();
-            return webContent;
-        }
+
+//        if (TextUtils.isEmpty(uriString)) {
+//            getActivity().finish();
+//            return webContent;
+//        }
+
         initWebView(JS_INTERFACE_NAME);
         listenerSoftInput();
+
         return webContent;
     }
 
@@ -136,6 +139,10 @@ public class BaseWebFragment extends BackHandledFragment implements View.OnClick
         webView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
+                if(webView == null) {
+                    return;
+                }
+
                 Log.d(TAG, "getDecorView().getHeight(): " + getActivity().getWindow().getDecorView().getHeight());
                 Log.d(TAG, "webView.getHeight(): " + webView.getHeight());
                 int heightDiff = Math.abs(getActivity().getWindow().getDecorView().getHeight() - webView.getHeight());
@@ -181,12 +188,14 @@ public class BaseWebFragment extends BackHandledFragment implements View.OnClick
 
         webView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             public void onGlobalLayout() {
+                if(webView == null)
+                    return;
                 webView.postInvalidate();
             }
         });
 
         webView.setDownloadListener(onDownloadListener);
-        webView.loadUrl(uriString);
+        loadUrl(uriString);
 //        String htmlText = AssetsHelper.getStringAssets(this, "test.html");
 //        webView.loadData(htmlText, "text/html", "utf-8");
     }

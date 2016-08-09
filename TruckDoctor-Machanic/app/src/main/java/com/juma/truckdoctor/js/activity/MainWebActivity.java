@@ -1,14 +1,20 @@
 package com.juma.truckdoctor.js.activity;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTabHost;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.View;
+import android.widget.TabHost;
+import android.widget.TextView;
 
 import com.juma.truckdoctor.js.R;
 import com.juma.truckdoctor.js.base.BaseActivity;
@@ -28,6 +34,8 @@ import java.net.URLDecoder;
 public class MainWebActivity extends BaseActivity implements BackHandledInterface, OnCurrentFragmentCompleteListener{
     private static final String TAG = MainWebActivity.class.getSimpleName();
 
+    private FragmentTabHost mTabHost;
+
     private String url = null;
     private BackHandledFragment backHandledFragment;
     private BaseWebFragment baseWebFragment;
@@ -36,9 +44,49 @@ public class MainWebActivity extends BaseActivity implements BackHandledInterfac
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        baseWebFragment = BaseWebFragment.newInstance(url);
+//        baseWebFragment = BaseWebFragment.newInstance(url);
+        mTabHost = (FragmentTabHost)findViewById(android.R.id.tabhost);
+        mTabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
+        if (android.os.Build.VERSION.SDK_INT > 10) {
+            mTabHost.getTabWidget().setShowDividers(0);
+        }
 
+        initTabHost();
         start();
+    }
+
+    /**
+     * 初始化tabHost
+     */
+    private void initTabHost() {
+        BottomTab[] tabs = BottomTab.values();
+        for(int i=0; i<tabs.length; i++) {
+            BottomTab tab = tabs[i];
+            TabHost.TabSpec tabSpec = mTabHost.newTabSpec(tab.getTabName());
+            View indicator = getIndicatorView(tab);
+            tabSpec.setIndicator(indicator);
+            mTabHost.addTab(tabSpec, tab.getClz(), null);
+        }
+    }
+
+    /**
+     * 初始化与tabHost关联的视图
+     * @param mainTab
+     * @return
+     */
+    private View getIndicatorView(BottomTab mainTab) {
+        //设置drawableTop
+        View indicator = getLayoutInflater().from(getApplicationContext())
+                .inflate(R.layout.tab_indicator, null);
+        TextView title = (TextView) indicator.findViewById(R.id.tab_title);
+        Drawable drawable = this.getResources().getDrawable(
+                mainTab.getResIcon());
+        //设置文字上部图标
+        title.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null,
+                null);
+        //设置页卡文字内容
+        title.setText(mainTab.getTabName());
+        return indicator;
     }
 
     @Override
@@ -50,7 +98,6 @@ public class MainWebActivity extends BaseActivity implements BackHandledInterfac
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         processIntent(intent);
-
     }
 
     @Override
@@ -82,11 +129,13 @@ public class MainWebActivity extends BaseActivity implements BackHandledInterfac
     }
 
     private void start() {
-        FragmentManager fm = getSupportFragmentManager();
+//        FragmentManager fm = getSupportFragmentManager();
         //使用视频loading页
 //        fm.beginTransaction().add(R.id.content, videoAnimationFragment).commitAllowingStateLoss();
         //使用普通loading页
-        fm.beginTransaction().replace(R.id.content, baseWebFragment).commitAllowingStateLoss();
+//        fm.beginTransaction().replace(R.id.content, baseWebFragment).commitAllowingStateLoss();
+        mTabHost.setCurrentTab(0);
+
     }
 
     @Override
@@ -112,7 +161,7 @@ public class MainWebActivity extends BaseActivity implements BackHandledInterfac
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        baseWebFragment.onActivityRequestPermissionsResult(requestCode, permissions, grantResults);
+//        baseWebFragment.onActivityRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
