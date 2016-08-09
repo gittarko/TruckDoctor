@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,12 +28,16 @@ import com.juma.truckdoctor.js.api.Api;
 import com.juma.truckdoctor.js.api.ApiUser;
 import com.juma.truckdoctor.js.api.ApiResponse;
 import com.juma.truckdoctor.js.base.BaseActivity;
+import com.juma.truckdoctor.js.helper.FunctionVerifyCode;
 import com.juma.truckdoctor.js.model.User;
 import com.juma.truckdoctor.js.utils.AppUtils;
 import com.juma.truckdoctor.js.utils.RegularUtils;
 import com.juma.truckdoctor.js.widget.PopUpWindowAlertDialog;
 
+import org.json.JSONObject;
+
 import java.util.List;
+import java.util.regex.Pattern;
 
 import okhttp3.Call;
 
@@ -47,10 +52,22 @@ public class LoginActivity extends BaseActivity {
     // UI references.
     private AutoCompleteTextView mPhoneView;
     private EditText mPasswordView;
+    private EditText mVerifyCode;
     private TextView mForgetPassword;
+    private TextView mLoginSwitch;
+    private LinearLayout mLayoutPwd;
+    private LinearLayout mLayoutSms;
+    private Button mVerifyCodeBtn;
 
     private View mProgressView;
     private View mLoginFormView;
+
+    //登录方式定义
+    private enum LoginType {
+        ACCOUNT_LOGIN,  //使用帐号登录
+        SMS_CODE_LOGIN  //还用短信验证码登录
+    }
+    private LoginType type = LoginType.ACCOUNT_LOGIN;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +95,7 @@ public class LoginActivity extends BaseActivity {
                 return false;
             }
         });
+        mVerifyCode = (EditText)findViewById(R.id.verify_code);
 
         Button mLoginButton = (Button) findViewById(R.id.login_button);
         mLoginButton.setOnClickListener(new OnClickListener() {
@@ -95,8 +113,34 @@ public class LoginActivity extends BaseActivity {
             }
         });
 
+        mVerifyCodeBtn = (Button)findViewById(R.id.verify_code_button);
+
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        //设置登录方式
+        mLayoutPwd = (LinearLayout)findViewById(R.id.ll_password_login);
+        mLayoutSms = (LinearLayout)findViewById(R.id.ll_sms_login);
+        mLoginSwitch = (TextView)findViewById(R.id.login_switch);
+        updateLoginType();
+    }
+
+    /**
+     * 初始化登录方式
+     * 登录包含用密码登录和使用短信验证码登录
+     */
+    private void updateLoginType() {
+        if(type == LoginType.ACCOUNT_LOGIN) {
+            mLayoutSms.setVisibility(View.GONE);
+            mLayoutPwd.setVisibility(View.VISIBLE);
+            mVerifyCode.setText("");
+            mLoginSwitch.setText(R.string.label_sms_login);
+        }else {
+            mLayoutSms.setVisibility(View.VISIBLE);
+            mLayoutPwd.setVisibility(View.GONE);
+            mPasswordView.setText("");
+            mLoginSwitch.setText(R.string.label_pwd_login);
+        }
     }
 
     @Override
@@ -154,25 +198,32 @@ public class LoginActivity extends BaseActivity {
         mPhoneView.setError(null);
         mPasswordView.setError(null);
 
-        // Store values at the time of the login attempt.
-        String phone = mPhoneView.getText().toString();
-        String password = mPasswordView.getText().toString();
-
         boolean cancel = false;
         View focusView = null;
 
-        //检查手机号输入合法性
-        if (TextUtils.isEmpty(phone) || RegularUtils.isMobileExact(phone)) {
-            showToast(R.string.error_invalid_phone, Toast.LENGTH_SHORT);
+        // Store values at the time of the login attempt.
+        String phone = mPhoneView.getText().toString();
+        String password = "";
+
+        if(isPhoneValid(phone)) {
             focusView = mPhoneView;
             cancel = true;
         }
 
-        // 检查密码输入合法性
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            showToast(R.string.error_invalid_password, Toast.LENGTH_SHORT);
-            focusView = mPasswordView;
-            cancel = true;
+        if(type == LoginType.ACCOUNT_LOGIN) {
+            password = mPasswordView.getText().toString();
+            // 检查密码输入合法性
+            if (!isPasswordValid(password)) {
+                focusView = mPasswordView;
+                cancel = true;
+            }
+        }else {
+            password = mVerifyCode.getText().toString();
+            //检测验证码是否为空
+            if(!isVerifyCodeValid(password)) {
+                focusView = mVerifyCode;
+                cancel = true;
+            }
         }
 
         if (cancel) {
@@ -186,14 +237,45 @@ public class LoginActivity extends BaseActivity {
     }
 
     /**
+     * 验证码是否有效
+     * @param password
+     * @return
+     */
+    private boolean isVerifyCodeValid(String password) {
+        if(TextUtils.isEmpty(password)) {
+            mVerifyCode.setError(getResources().getString(R.string.error_empty_code));
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 检查手机号是否输入有效
+     * @param phone
+     * @return
+     */
+    private boolean isPhoneValid(String phone) {
+        //检查手机号输入合法性
+        if(!RegularUtils.isMobileExact(phone)){
+//            showToast(R.string.error_invalid_phone, Toast.LENGTH_SHORT);
+            mPhoneView.setError(getResources().getString(R.string.error_invalid_phone));
+            return false;
+        }
+
+        return true;
+    }
+
+
+    /**
      * <p>
-     * 检查密码输入是否符合规则,可输入数字，英文字母
-     * 密码长度6个字符以上
+     * 检查密码输入是否符合规则,可输入数字，英文字母大小写
+     * 密码长度6个字符以上, 20个以内
      * </p>
      * @param password  密码
      */
     private boolean isPasswordValid(String password) {
-        return password.length() > 6;
+        return Pattern.matches("^[\\w]{6,20}", password);
     }
 
     /**
@@ -269,6 +351,44 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+
+    /**
+     * 异步获取短信验证码
+     * @param view
+     */
+    public void getVerifyCode(View view) {
+//        String phone = mPhoneView.getText().toString();
+//        if(!isPhoneValid(phone)) {
+//            return;
+//        }
+
+        new FunctionVerifyCode(mVerifyCodeBtn).start();
+
+//        ApiUser.getVerifyCode(phone, new ApiResponse<JSONObject>() {
+//            @Override
+//            public void onSuccess(JSONObject response) {
+//            }
+//
+//            @Override
+//            public void onError(Exception e) {
+//                Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+    }
+
+    /**
+     * 切换登录方式
+     * @param view
+     */
+    public void switchLoginType(View view) {
+        if(type == LoginType.ACCOUNT_LOGIN) {
+            type = LoginType.SMS_CODE_LOGIN;
+        }else {
+            type = LoginType.ACCOUNT_LOGIN;
+        }
+
+        updateLoginType();
+    }
 
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.

@@ -55,10 +55,11 @@ public class ApiUser {
      * @param phone     手机
      * @param password  密码
      * @param callback  请求回调
+     * {url = }
      */
     public static void asyncLogin(String phone, String password,
                                   final ApiResponse<User> callback) {
-        final String url = Api.getUrl() + "";
+        String url = Api.getUrl() + "";
         OkHttpUtils.post()
                 .url(url)
                 .addParams("phone", phone)
@@ -86,6 +87,36 @@ public class ApiUser {
                                 callback.onError(new Exception(jsonObject.getString("message")));
                             }
                         }catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 获取短信验证码
+     * @param phone
+     * @param callBack
+     * {url = }
+     */
+    public static void getVerifyCode(String phone, final ApiResponse<JSONObject> callBack) {
+        String url = Api.getUrl() + "";
+        OkHttpUtils.post()
+                .url(url)
+                .addParams("phone", phone)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        callBack.onError(new Exception("网络访问失败"));
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        try{
+                            JSONObject jsonObject = new JSONObject(response);
+                            callBack.onSuccess(jsonObject);
+                        }catch(JSONException e) {
                             e.printStackTrace();
                         }
                     }
