@@ -13,8 +13,8 @@ public class Api {
     public static final String PAY_HOST_TEST = "http://10.101.0.16:8002/";
     public static final String PAY_HOST_OFFICIAL = "http://wallet.jumapeisong.com/";
 
-    public static final String HOST_DEV = "http://10.101.0.105:8080/";
-    public static final String HOST_TEST = "http://10.101.0.16:8001/";
+    public static final String HOST_DEV = "http://192.168.7.33:8080";//http://10.101.0.105:8080/";
+    public static final String HOST_TEST = "http://192.168.7.33:8080";//"http://10.101.0.16:8001/";
     public static final String HOST_OFFICIAL = "http://api.lovedriver.cn/";
 
     public static final String URL_DRIVER_DEV = HOST_DEV + "forward/driver/loading.html";
@@ -43,6 +43,10 @@ public class Api {
 
     public static String getUrl() {
         return url;
+    }
+
+    public static String getBaseUrl() {
+        return host;
     }
 
     public static void init() {

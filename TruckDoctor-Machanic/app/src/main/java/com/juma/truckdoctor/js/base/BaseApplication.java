@@ -31,6 +31,9 @@ public class BaseApplication extends Application {
         STORAGE_USER_KEY = "truckdoctor_user";
     }
 
+    //是否保存全局Crash日志
+    private boolean IS_SAVE_CRASH = false;
+
     private static BaseApplication application;
 
     public static Context getContext() {
@@ -45,11 +48,12 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         application = this;
-        //初始化全局异常捕获
-        CrashHandler.getInstance().init(this)
-                .setCacheDir(CRASH_DIR);
+        if(IS_SAVE_CRASH) {
+            //初始化全局异常捕获
+            CrashHandler.getInstance().init(this)
+                    .setCacheDir(CRASH_DIR);
+        }
         initHttp();
-
         SystemParamUtil.init(this);
         Api.init();
         JPushInterface.setDebugMode(true);
@@ -64,7 +68,6 @@ public class BaseApplication extends Application {
                 .readTimeout(10000L, TimeUnit.MILLISECONDS)
                 //其他配置
                 .build();
-
         OkHttpUtils.initClient(okHttpClient);
     }
 

@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 public class User implements Serializable {
     int userId;
+    String loginTime;
     String userName;
     String phone;
     String password;
