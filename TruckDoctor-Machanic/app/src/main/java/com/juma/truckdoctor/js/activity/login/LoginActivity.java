@@ -5,8 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
-
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -19,14 +17,16 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.juma.truckdoctor.js.R;
 import com.juma.truckdoctor.js.activity.MainWebActivity;
 import com.juma.truckdoctor.js.api.Api;
-import com.juma.truckdoctor.js.api.ApiUser;
 import com.juma.truckdoctor.js.api.ApiResponse;
+import com.juma.truckdoctor.js.api.ApiUser;
 import com.juma.truckdoctor.js.base.BaseActivity;
 import com.juma.truckdoctor.js.helper.FunctionVerifyCode;
 import com.juma.truckdoctor.js.model.User;
@@ -34,39 +34,75 @@ import com.juma.truckdoctor.js.utils.AppUtils;
 import com.juma.truckdoctor.js.utils.RegularUtils;
 import com.juma.truckdoctor.js.widget.PopUpWindowAlertDialog;
 
-import org.json.JSONObject;
-
 import java.util.List;
 import java.util.regex.Pattern;
 
-import okhttp3.Call;
+import butterknife.BindView;
+import butterknife.BindViews;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * @author dong.he
- *
- * 登录界面
- *
+ *         <p>
+ *         登录界面
  */
 public class LoginActivity extends BaseActivity {
     private static final String TITLE_CENTER = "登录";
-    // UI references.
-    private AutoCompleteTextView mPhoneView;
-    private EditText mPasswordView;
-    private EditText mVerifyCode;
-    private TextView mForgetPassword;
-    private TextView mLoginSwitch;
-    private LinearLayout mLayoutPwd;
-    private LinearLayout mLayoutSms;
-    private Button mVerifyCodeBtn;
 
-    private View mProgressView;
-    private View mLoginFormView;
+    @BindView(R.id.login_progress)
+    ProgressBar mProgressView;
+
+    @BindView(R.id.phone)
+    AutoCompleteTextView mPhoneView;        //手机号
+    @BindView(R.id.password)
+    EditText mPasswordView;                 //密码
+
+    @BindView(R.id.ll_password_login)
+    LinearLayout mLayoutPwd;
+    @BindView(R.id.verify_code)
+    EditText mVerifyCode;                   //验证码
+
+    @BindView(R.id.verify_code_button)
+    Button mVerifyCodeBtn;                  //获取验证码
+
+    @BindView(R.id.ll_sms_login)
+    LinearLayout mLayoutSms;
+    @BindView(R.id.login_switch)
+    TextView mLoginSwitch;                  //登录方式切换
+    @BindView(R.id.login_button)
+    Button mLoginButton;                    //登录按钮
+    @BindView(R.id.forget_password)
+    TextView mForgetPassword;
+
+    @BindView(R.id.login_form)
+    ScrollView mLoginFormView;
+
+
+    @OnClick({R.id.verify_code_button, R.id.login_switch, R.id.login_button, R.id.forget_password})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.verify_code_button:
+                getVerifyCode(view);
+                break;
+            case R.id.login_switch:
+                switchLoginType(view);
+                break;
+            case R.id.login_button:
+                attemptLogin();
+                break;
+            case R.id.forget_password:
+                attemptPopUpWindow();
+                break;
+        }
+    }
 
     //登录方式定义
     private enum LoginType {
         ACCOUNT_LOGIN,  //使用帐号登录
         SMS_CODE_LOGIN  //还用短信验证码登录
     }
+
     private LoginType type = LoginType.ACCOUNT_LOGIN;
 
     @Override
@@ -82,9 +118,8 @@ public class LoginActivity extends BaseActivity {
     @Override
     public void initLayoutView() {
         super.initLayoutView();
+        ButterKnife.bind(this);
 
-        mPhoneView = (AutoCompleteTextView) findViewById(R.id.phone);
-        mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -95,33 +130,7 @@ public class LoginActivity extends BaseActivity {
                 return false;
             }
         });
-        mVerifyCode = (EditText)findViewById(R.id.verify_code);
 
-        Button mLoginButton = (Button) findViewById(R.id.login_button);
-        mLoginButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
-
-        mForgetPassword = (TextView)findViewById(R.id.forget_password);
-        mForgetPassword.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptPopUpWindow();
-            }
-        });
-
-        mVerifyCodeBtn = (Button)findViewById(R.id.verify_code_button);
-
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
-
-        //设置登录方式
-        mLayoutPwd = (LinearLayout)findViewById(R.id.ll_password_login);
-        mLayoutSms = (LinearLayout)findViewById(R.id.ll_sms_login);
-        mLoginSwitch = (TextView)findViewById(R.id.login_switch);
         updateLoginType();
     }
 
@@ -130,12 +139,12 @@ public class LoginActivity extends BaseActivity {
      * 登录包含用密码登录和使用短信验证码登录
      */
     private void updateLoginType() {
-        if(type == LoginType.ACCOUNT_LOGIN) {
+        if (type == LoginType.ACCOUNT_LOGIN) {
             mLayoutSms.setVisibility(View.GONE);
             mLayoutPwd.setVisibility(View.VISIBLE);
             mVerifyCode.setText("");
             mLoginSwitch.setText(R.string.label_sms_login);
-        }else {
+        } else {
             mLayoutSms.setVisibility(View.VISIBLE);
             mLayoutPwd.setVisibility(View.GONE);
             mPasswordView.setText("");
@@ -164,30 +173,31 @@ public class LoginActivity extends BaseActivity {
      * 登录遇到困难,触发弹窗允许用户联系客服协助解决登录问题
      */
     PopUpWindowAlertDialog.Builder builder;
+
     private void attemptPopUpWindow() {
         builder = new PopUpWindowAlertDialog.Builder(this);
         builder.setTitle(getResources().getString(R.string.label_contact), 16)
-        .setMessage(Api.Customer_Service_Phone + "\n" +
-                getResources().getString(R.string.label_contact_descripton), 14)
-        .setPositiveButton(getResources().getString(R.string.action_call_phone),
-                new DialogInterface.OnClickListener() {
+                .setMessage(Api.Customer_Service_Phone + "\n" +
+                        getResources().getString(R.string.label_contact_descripton), 14)
+                .setPositiveButton(getResources().getString(R.string.action_call_phone),
+                        new DialogInterface.OnClickListener() {
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //调起电话拨打界面
-                AppUtils.getPhoneCall(LoginActivity.this, Api.Customer_Service_Phone);
-                builder.dimiss();
-                builder = null;
-            }
-        })
-        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                builder.dimiss();
-                builder = null;
-            }
-        })
-        .build();
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //调起电话拨打界面
+                                AppUtils.getPhoneCall(LoginActivity.this, Api.Customer_Service_Phone);
+                                builder.dimiss();
+                                builder = null;
+                            }
+                        })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        builder.dimiss();
+                        builder = null;
+                    }
+                })
+                .build();
     }
 
 
@@ -205,22 +215,22 @@ public class LoginActivity extends BaseActivity {
         String phone = mPhoneView.getText().toString();
         String password = "";
 
-        if(isPhoneValid(phone)) {
+        if (isPhoneValid(phone)) {
             focusView = mPhoneView;
             cancel = true;
         }
 
-        if(type == LoginType.ACCOUNT_LOGIN) {
+        if (type == LoginType.ACCOUNT_LOGIN) {
             password = mPasswordView.getText().toString();
             // 检查密码输入合法性
             if (!isPasswordValid(password)) {
                 focusView = mPasswordView;
                 cancel = true;
             }
-        }else {
+        } else {
             password = mVerifyCode.getText().toString();
             //检测验证码是否为空
-            if(!isVerifyCodeValid(password)) {
+            if (!isVerifyCodeValid(password)) {
                 focusView = mVerifyCode;
                 cancel = true;
             }
@@ -238,11 +248,12 @@ public class LoginActivity extends BaseActivity {
 
     /**
      * 验证码是否有效
+     *
      * @param password
      * @return
      */
     private boolean isVerifyCodeValid(String password) {
-        if(TextUtils.isEmpty(password)) {
+        if (TextUtils.isEmpty(password)) {
             mVerifyCode.setError(getResources().getString(R.string.error_empty_code));
             return false;
         }
@@ -252,12 +263,13 @@ public class LoginActivity extends BaseActivity {
 
     /**
      * 检查手机号是否输入有效
+     *
      * @param phone
      * @return
      */
     private boolean isPhoneValid(String phone) {
         //检查手机号输入合法性
-        if(!RegularUtils.isMobileExact(phone)){
+        if (!RegularUtils.isMobileExact(phone)) {
 //            showToast(R.string.error_invalid_phone, Toast.LENGTH_SHORT);
             mPhoneView.setError(getResources().getString(R.string.error_invalid_phone));
             return false;
@@ -272,7 +284,8 @@ public class LoginActivity extends BaseActivity {
      * 检查密码输入是否符合规则,可输入数字，英文字母大小写
      * 密码长度6个字符以上, 20个以内
      * </p>
-     * @param password  密码
+     *
+     * @param password 密码
      */
     private boolean isPasswordValid(String password) {
         return Pattern.matches("^[\\w]{6,20}", password);
@@ -280,7 +293,8 @@ public class LoginActivity extends BaseActivity {
 
     /**
      * 执行异步登录
-     * @param phone 手机号
+     *
+     * @param phone    手机号
      * @param password 登录密码
      */
     private void doLogin(String phone, String password) {
@@ -354,6 +368,7 @@ public class LoginActivity extends BaseActivity {
 
     /**
      * 异步获取短信验证码
+     *
      * @param view
      */
     public void getVerifyCode(View view) {
@@ -378,12 +393,13 @@ public class LoginActivity extends BaseActivity {
 
     /**
      * 切换登录方式
+     *
      * @param view
      */
     public void switchLoginType(View view) {
-        if(type == LoginType.ACCOUNT_LOGIN) {
+        if (type == LoginType.ACCOUNT_LOGIN) {
             type = LoginType.SMS_CODE_LOGIN;
-        }else {
+        } else {
             type = LoginType.ACCOUNT_LOGIN;
         }
 
