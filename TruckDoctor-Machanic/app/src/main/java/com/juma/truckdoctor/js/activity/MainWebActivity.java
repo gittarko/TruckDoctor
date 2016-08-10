@@ -11,6 +11,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTabHost;
 import android.text.TextUtils;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TabHost;
@@ -22,6 +24,7 @@ import com.juma.truckdoctor.js.fragment.BackHandledFragment;
 import com.juma.truckdoctor.js.fragment.BackHandledInterface;
 import com.juma.truckdoctor.js.fragment.BaseWebFragment;
 import com.juma.truckdoctor.js.fragment.OnCurrentFragmentCompleteListener;
+import com.juma.truckdoctor.js.widget.BadgeView;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -34,11 +37,14 @@ import java.net.URLDecoder;
 public class MainWebActivity extends BaseActivity implements BackHandledInterface, OnCurrentFragmentCompleteListener{
     private static final String TAG = MainWebActivity.class.getSimpleName();
 
-    private FragmentTabHost mTabHost;
+    //订单提醒控件
+    private BadgeView mBvOrders;
 
-    private String url = null;
+    private FragmentTabHost mTabHost;
     private BackHandledFragment backHandledFragment;
     private BaseWebFragment baseWebFragment;
+
+    private String url = null;
 
 
     @Override
@@ -66,6 +72,18 @@ public class MainWebActivity extends BaseActivity implements BackHandledInterfac
             View indicator = getIndicatorView(tab);
             tabSpec.setIndicator(indicator);
             mTabHost.addTab(tabSpec, tab.getClz(), null);
+
+            if(tab.equals(BottomTab.ORDERS)) {
+                View mes = indicator.findViewById(R.id.tab_mes);
+                mBvOrders = new BadgeView(this, mes);
+                //提醒放置在右上角
+                mBvOrders.setBadgePosition(BadgeView.POSITION_TOP_RIGHT);
+                //设置提醒的文字大小
+                mBvOrders.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+                //设置提醒背景
+                mBvOrders.setBackgroundResource(R.drawable.notification_bg);
+                mBvOrders.setGravity(Gravity.CENTER);
+            }
         }
     }
 
