@@ -24,30 +24,32 @@ import cn.jpush.android.api.TagAliasCallback;
 /**
  * Created by Administrator on 2016/5/25 0025.
  */
-public class JsInterface {
+public class JsInterface implements BaseJsInterface{
 
     private static final String TAG = "JsInterface";
 
     private Context mContext;
     private WebView mWebView;
-    private WebChromeClient mWebChromeClient;
-    private String mUriString;
+//    private WebChromeClient mWebChromeClient;
+//    private String mUriString;
     private Handler mHandler;
 
-    public JsInterface(Context context, WebView webView, WebChromeClient webChromeClient, String uriString) {
+    public JsInterface(Context context, WebView webView/*, WebChromeClient webChromeClient*/) {
         mContext = context;
         mWebView = webView;
-        mWebChromeClient = webChromeClient;
-        mUriString = uriString;
+//        mWebChromeClient = webChromeClient;
         mHandler = new Handler(Looper.getMainLooper());
     }
 
+    /**
+     * java调用js
+     * @param jsString
+     */
     protected void execJavaScript(final String jsString) {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
                 try {
-//                    Toast.makeText(mContext, jsString, Toast.LENGTH_SHORT).show();
                     mWebView.loadUrl("javascript:" + jsString + ";");
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -292,5 +294,10 @@ public class JsInterface {
         if (!TextUtils.isEmpty(inputChangeCallBackMethod)) {
             execJavaScript(inputChangeCallBackMethod + "('" + result + "');");
         }
+    }
+
+    @Override
+    public void addJsInterface(String objectName) {
+        mWebView.addJavascriptInterface(this, objectName);
     }
 }

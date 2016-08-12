@@ -1,5 +1,7 @@
 package com.juma.truckdoctor.js.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -11,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTabHost;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -20,14 +23,22 @@ import android.widget.TextView;
 
 import com.juma.truckdoctor.js.R;
 import com.juma.truckdoctor.js.base.BaseActivity;
+import com.juma.truckdoctor.js.base.BaseApplication;
+import com.juma.truckdoctor.js.common.Constants;
 import com.juma.truckdoctor.js.fragment.BackHandledFragment;
 import com.juma.truckdoctor.js.fragment.BackHandledInterface;
 import com.juma.truckdoctor.js.fragment.BaseWebFragment;
 import com.juma.truckdoctor.js.fragment.OnCurrentFragmentCompleteListener;
+import com.juma.truckdoctor.js.helper.CheckUpdateHelper;
+import com.juma.truckdoctor.js.manager.PermissionManager;
+import com.juma.truckdoctor.js.utils.EncryptUtils;
+import com.juma.truckdoctor.js.utils.SystemParamUtil;
 import com.juma.truckdoctor.js.widget.BadgeView;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by hedong on 16/8/5.
@@ -44,8 +55,12 @@ public class MainWebActivity extends BaseActivity implements BackHandledInterfac
     private BackHandledFragment backHandledFragment;
     private BaseWebFragment baseWebFragment;
 
-    private String url = null;
+    private PermissionManager permissionManager;
+    private BroadcastReceiver mReceiver;
 
+    //各个模块对应的入口地址
+    private String[] indexUrls = null;
+    private String url = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,8 +72,28 @@ public class MainWebActivity extends BaseActivity implements BackHandledInterfac
             mTabHost.getTabWidget().setShowDividers(0);
         }
 
+        initIndexUrl();
         initTabHost();
         start();
+
+    }
+
+    /**
+     * 初始化每个模块对应的入口地址
+     */
+    private void initIndexUrl() {
+        String env = SystemParamUtil.getParamEnv();
+        String app = SystemParamUtil.getParamApp();
+        String url_name = app + "_" + env;
+        int array_id = getResources().getIdentifier(url_name, "array", getPackageName());
+        if (array_id != 0) {
+            indexUrls = getResources().getStringArray(array_id);
+            for (int i = 1; i < indexUrls.length; i++) {
+                indexUrls[i] = indexUrls[0] + indexUrls[i];
+            }
+        } else {
+            Log.e(TAG, "identifier name:" + url_name + " is not exist!");
+        }
     }
 
     /**
@@ -66,14 +101,17 @@ public class MainWebActivity extends BaseActivity implements BackHandledInterfac
      */
     private void initTabHost() {
         BottomTab[] tabs = BottomTab.values();
-        for(int i=0; i<tabs.length; i++) {
+        for (int i = 0; i < tabs.length; i++) {
             BottomTab tab = tabs[i];
-            TabHost.TabSpec tabSpec = mTabHost.newTabSpec(tab.getTabName());
+            TabHost.TabSpec tabSpec = mTabHost.newTabSpec(getResources().getString(tab.getTabName()));
             View indicator = getIndicatorView(tab);
             tabSpec.setIndicator(indicator);
-            mTabHost.addTab(tabSpec, tab.getClz(), null);
+            //将url地址传递到每个fragment
+            Bundle data = new Bundle();
+            data.putString(BaseWebFragment.ARG_PARAM1, indexUrls[i + 1]);
+            mTabHost.addTab(tabSpec, tab.getClz(), data);
 
-            if(tab.equals(BottomTab.ORDERS)) {
+            if (tab.equals(BottomTab.ORDERS)) {
                 View mes = indicator.findViewById(R.id.tab_mes);
                 mBvOrders = new BadgeView(this, mes);
                 //提醒放置在右上角
@@ -153,7 +191,27 @@ public class MainWebActivity extends BaseActivity implements BackHandledInterfac
         //使用普通loading页
 //        fm.beginTransaction().replace(R.id.content, baseWebFragment).commitAllowingStateLoss();
         mTabHost.setCurrentTab(0);
+        //请求应用权限
+        permissionManager = new PermissionManager(this);
+        permissionManager.checkAndRequestPermissions(PermissionManager.REQUEST_CODES_ALL_PERMISSON);
+        //绑定极光推送
+        BaseApplication.bindJpush();
+        //检查应用更新
+        CheckUpdateHelper.checkUpdate(this, permissionManager);
+    }
 
+    /**
+     * 设置底部数字提醒
+     * @param number
+     */
+    public void setTabNotice(int number) {
+        if(number == 0) {
+            mBvOrders.setText("");
+            mBvOrders.hide();
+        }else {
+            mBvOrders.setText(String.valueOf(number));
+            mBvOrders.show();
+        }
     }
 
     @Override
@@ -164,6 +222,18 @@ public class MainWebActivity extends BaseActivity implements BackHandledInterfac
     @Override
     public void onCurrentFragmentComplete(Fragment fragment) {
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mTabHost.getCurrentTabTag().equals(getResources().getString(R.string.tab_my_order))) {
+            //请求我的未处理订单数
+            //每次应用由不可见到可见状态时都刷新提示数字
+            Intent intent = new Intent();
+            intent.setAction(Constants.INTENT_ACTION_NOTICE_REQUEST);
+            sendBroadcast(intent);
+        }
     }
 
     @Override
@@ -180,6 +250,7 @@ public class MainWebActivity extends BaseActivity implements BackHandledInterfac
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 //        baseWebFragment.onActivityRequestPermissionsResult(requestCode, permissions, grantResults);
+        permissionManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override

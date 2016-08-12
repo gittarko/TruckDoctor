@@ -46,4 +46,11 @@
     <string name="refresh">刷新</string>
 
 
+    <!--app主页底部导航栏TAB设置-->
+    <string name="tab_my_order">我的订单</string>
+    <string name="tab_my_message">消息中心</string>
+    <string name="tab_my_pricelist">价格表</string>
+    <string name="tab_custom_verifycode">客户验证码</string>
+    <string name="tab_user_center">我的</string>
+
 </resources>

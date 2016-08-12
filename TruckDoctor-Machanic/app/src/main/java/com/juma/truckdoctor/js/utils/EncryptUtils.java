@@ -49,8 +49,8 @@ public class EncryptUtils {
                 '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
         };
         for(int i=0,j=0; i<src.length; i++) {
-            res[j++] = hexDigits[src[i] >>> 4 & 0x0f];
-            res[j++] = hexDigits[src[i] & 0x0f];
+            res[j++] = hexDigits[src[i] >>> 4 & 0x0f];     //取高位 <= 15
+            res[j++] = hexDigits[src[i] & 0x0f];           //取低位 <= 15
         }
         return new String(res);
     }

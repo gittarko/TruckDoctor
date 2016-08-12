@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--技师端主页地址(开发环境)-->
+    <string-array name="machanic_dev">
+        <!--HOST-->
+        <item>http://10.101.0.105:8099</item>
+        <!--我的订单-->
+        <item>/forward/artificerApp/order.list</item>
+        <!--消息中心-->
+        <item>/forward/artificerApp/message</item>
+        <!--价格列表-->
+        <item>/forward/artificerApp/product.list</item>
+        <!--客户验证码-->
+        <item>/forward/artificerApp/get.checkcode</item>
+        <!--我的设置-->
+        <item>/forward/artificerApp/user/user.info</item>
+    </string-array>
+
+</resources>

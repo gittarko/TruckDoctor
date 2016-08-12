@@ -20,7 +20,8 @@
             android:id="@+id/webView_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible" />
+            android:visibility="visible"
+            android:layerType="software"/>
 
         <include
             android:id="@+id/refresh_page"

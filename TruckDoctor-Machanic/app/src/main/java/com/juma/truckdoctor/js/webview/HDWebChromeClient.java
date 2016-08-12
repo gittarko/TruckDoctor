@@ -29,6 +29,7 @@ public class HDWebChromeClient extends WebChromeClient {
         this.activity = activity;
     }
 
+
     @Override
     public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
         callback.invoke(origin, true, false);

@@ -3,15 +3,19 @@ package com.juma.truckdoctor.js.activity.login;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -74,7 +78,8 @@ public class LoginActivity extends BaseActivity {
 
     @BindView(R.id.login_form)
     ScrollView mLoginFormView;
-
+    @BindView(R.id.phone_login_form)
+    LinearLayout mPhoneLoginLayout;
 
     @OnClick({R.id.verify_code_button, R.id.login_switch, R.id.login_button, R.id.forget_password})
     public void onClick(View view) {
@@ -158,7 +163,6 @@ public class LoginActivity extends BaseActivity {
         return TITLE_CENTER;
     }
 
-
     @Override
     public OnClickListener getNavigationClickListener() {
         return new OnClickListener() {
@@ -167,6 +171,22 @@ public class LoginActivity extends BaseActivity {
                 onBackPressed();
             }
         };
+    }
+
+    /**
+     * 触摸EditText以外的地方隐藏键盘
+     * @param ev
+     * @return
+     */
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (AppUtils.isShouldHideKeyboard(v, ev)) {
+                AppUtils.hideKeyboard(v.getContext(), v.getWindowToken());
+            }
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
 

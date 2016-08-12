@@ -28,17 +28,15 @@ import okhttp3.RequestBody;
  * 与用户相关的接口调用
  */
 
-public class ApiUser {
+public class ApiUser extends Api {
     private static final String TAG = ApiUser.class.getSimpleName();
-    public static final MediaType MEDIA_TYPE_JSON =
-            MediaType.parse("application/json; charset=utf-8");
 
     /**
-     * 获取本地存储的用户信息
+     * 异步获取本地存储的用户信息
      * @param context
      * @param callBack
      */
-    public static void getLocalUserData(Context context, final ApiResponse<User> callBack) {
+    public static void asycGetLocalUserData(Context context, final ApiResponse<User> callBack) {
         new CacheTask<User>(context) {
 
             @Override
@@ -59,6 +57,15 @@ public class ApiUser {
     }
 
     /**
+     * 同步获取本地用户信息
+     * @param context
+     * @return
+     */
+    public static User syncGetLocalUserData(Context context) {
+        return (User)CacheManager.readObject(context, BaseApplication.STORAGE_USER_KEY);
+    }
+
+    /**
      * 异步执行登录: 账号密码登录
      * @param phone     手机
      * @param password  密码
@@ -67,7 +74,7 @@ public class ApiUser {
      */
     public static void asyncLoginByAccount(final String phone, final String password,
                                   final ApiResponse<User> callback) {
-        String url = Api.getBaseUrl() + "/artificer/login";
+        String url = host + "/artificer/login";
         Map<String, String> params = new HashMap<>();
         params.put("loginName", phone);
         params.put("password", password);
@@ -116,7 +123,7 @@ public class ApiUser {
      */
     public static void asyncLoginByCode(final String phone, final String password,
                                            final ApiResponse<User> callback) {
-        String url = Api.getBaseUrl() + "/artificer/loginByCode";
+        String url = host + "/artificer/loginByCode";
         Map<String, String> params = new HashMap<>();
         params.put("password", password);
 
@@ -161,7 +168,7 @@ public class ApiUser {
      * {url = /artificer/sendCode}
      */
     public static void getVerifyCode(String phone, final ApiResponse<String> callBack) {
-        String url = Api.getBaseUrl()+ "/artificer/sendCode";
+        String url = host + "/artificer/sendCode";
         Map<String, String> params = new HashMap<>();
         params.put("loginName", phone);
         OkHttpUtils.postString()

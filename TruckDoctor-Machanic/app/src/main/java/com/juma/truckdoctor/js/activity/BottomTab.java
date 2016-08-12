@@ -2,6 +2,11 @@ package com.juma.truckdoctor.js.activity;
 
 import com.juma.truckdoctor.js.R;
 import com.juma.truckdoctor.js.fragment.BaseWebFragment;
+import com.juma.truckdoctor.js.fragment.CustomAuthWebFragment;
+import com.juma.truckdoctor.js.fragment.MessageListWebFragment;
+import com.juma.truckdoctor.js.fragment.OrderListWebFragment;
+import com.juma.truckdoctor.js.fragment.PriceListWebFragment;
+import com.juma.truckdoctor.js.fragment.UserCenterWebFragment;
 
 /**
  * Created by hedong on 16/8/9.
@@ -11,31 +16,31 @@ import com.juma.truckdoctor.js.fragment.BaseWebFragment;
 public enum BottomTab {
     ORDERS(0,
             R.drawable.tab_icon_orders,
-            "我的订单",
-            BaseWebFragment.class),
+            R.string.tab_my_order,
+            OrderListWebFragment.class),
     MESSAGE(1,
             R.drawable.tab_icon_message,
-            "消息中心",
-            BaseWebFragment.class),
+            R.string.tab_my_message,
+            MessageListWebFragment.class),
     PRICES(2,
             R.drawable.tab_icon_pricelist,
-            "价格表",
-            BaseWebFragment.class),
+            R.string.tab_my_pricelist,
+            PriceListWebFragment.class),
     CUSTOM(3,
             R.drawable.tab_icon_customer,
-            "客户验证码",
-            BaseWebFragment.class),
+            R.string.tab_custom_verifycode,
+            CustomAuthWebFragment.class),
     USER_CENTER(4,
             R.drawable.tab_icon_user,
-            "我的",
-            BaseWebFragment.class);
+            R.string.tab_user_center,
+            UserCenterWebFragment.class);
 
     private int index;
     private int resIcon;
-    private String tabName;
+    private int tabName;
     private Class<?> clz;
 
-    BottomTab(int index, int resIconId, String resTabName, Class<?> clz) {
+    BottomTab(int index, int resIconId, int resTabName, Class<?> clz) {
         this.index = index;
         this.resIcon = resIconId;
         this.tabName = resTabName;
@@ -50,11 +55,11 @@ public enum BottomTab {
         this.resIcon = resIcon;
     }
 
-    public String getTabName() {
+    public int getTabName() {
         return tabName;
     }
 
-    public void setTabName(String taabName) {
+    public void setTabName(int taabName) {
         this.tabName = taabName;
     }
 

@@ -11,9 +11,14 @@ import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Environment;
+import android.os.IBinder;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.juma.truckdoctor.js.R;
@@ -193,6 +198,57 @@ public class AppUtils {
                 return Constants.NETWORK_CLASS_4_G;
             default:
                 return Constants.NETWORK_CLASS_UNKNOWN;
+        }
+    }
+
+    /**
+     * 动态显示软键盘
+     *
+     * @param context 上下文
+     * @param edit    输入框
+     */
+    public static void showSoftInput(Context context, EditText edit) {
+        edit.setFocusable(true);
+        edit.setFocusableInTouchMode(true);
+        edit.requestFocus();
+        InputMethodManager inputManager = (InputMethodManager) context
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager.showSoftInput(edit, 0);
+    }
+
+    /**
+     * 动态隐藏软键盘
+     *
+     * @param context 上下文
+     * @param edit    输入框
+     */
+    public static void hideSoftInput(Context context, EditText edit) {
+        edit.clearFocus();
+        InputMethodManager inputmanger = (InputMethodManager) context
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputmanger.hideSoftInputFromWindow(edit.getWindowToken(), 0);
+    }
+
+    // 根据EditText所在坐标和用户点击的坐标相对比，来判断是否隐藏键盘
+    public static boolean isShouldHideKeyboard(View v, MotionEvent event) {
+        if (v != null && (v instanceof EditText)) {
+            int[] l = {0, 0};
+            v.getLocationInWindow(l);
+            int left = l[0],
+                    top = l[1],
+                    bottom = top + v.getHeight(),
+                    right = left + v.getWidth();
+            return !(event.getX() > left && event.getX() < right
+                    && event.getY() > top && event.getY() < bottom);
+        }
+        return false;
+    }
+
+    // 获取InputMethodManager，隐藏软键盘
+    public static void hideKeyboard(Context context, IBinder token) {
+        if (token != null) {
+            InputMethodManager im = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            im.hideSoftInputFromWindow(token, InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
 

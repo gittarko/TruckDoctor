@@ -18,4 +18,9 @@ public class Constants {
     // "4G" networks
     public static final int NETWORK_CLASS_4_G = 4;
 
+    //未读消息通知
+    public static final String INTENT_ACTION_NOTICE = "com.juma.truckdoctor.action.notice";
+    //请求未读消息
+    public static final String INTENT_ACTION_NOTICE_REQUEST = "com.juma.truckdoctor.action.notice.request";
+
 }

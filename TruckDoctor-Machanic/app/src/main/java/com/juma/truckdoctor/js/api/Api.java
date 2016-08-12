@@ -4,11 +4,17 @@ import android.text.TextUtils;
 
 import com.juma.truckdoctor.js.utils.SystemParamUtil;
 
+import okhttp3.MediaType;
+
 /**
  * Created by Administrator on 2016/8/4 0004.
  */
 
 public class Api {
+
+    protected static final MediaType MEDIA_TYPE_JSON =
+            MediaType.parse("application/json; charset=utf-8");
+
     public static final String PAY_HOST_DEV = "http://10.101.0.105:8081/";
     public static final String PAY_HOST_TEST = "http://10.101.0.16:8002/";
     public static final String PAY_HOST_OFFICIAL = "http://wallet.jumapeisong.com/";
@@ -27,11 +33,12 @@ public class Api {
 
     //客服联系电话
     public static final String Customer_Service_Phone = "4009922107";
-    private static String host;
-    private static String payHost;
-    private static String urlDriver;
-    private static String urlMachanic;
-    private static String url;
+
+    protected static String host;
+    protected static String payHost;
+    protected static String urlDriver;
+    protected static String urlMachanic;
+    protected static String url;
 
     public static String getHost() {
         return host;

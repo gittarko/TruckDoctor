@@ -2,8 +2,15 @@ package com.juma.truckdoctor.js.webview;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+
+import com.juma.truckdoctor.js.api.ApiResponse;
+import com.juma.truckdoctor.js.api.ApiUser;
+import com.juma.truckdoctor.js.model.User;
 
 import java.lang.reflect.Method;
 
@@ -11,7 +18,7 @@ import java.lang.reflect.Method;
  * Created by Administrator on 2016/5/25 0025.
  */
 public final class WebviewHelper {
-
+    private static final String TAG = WebviewHelper.class.getSimpleName();
     private static final String USER_AGENT = "Juma";
 
     public static void configWebView(WebView webView) {
@@ -69,5 +76,18 @@ public final class WebviewHelper {
 
         webView.setHorizontalScrollBarEnabled(false);
         webView.setVerticalScrollBarEnabled(true);
+
     }
+
+    //同步cookies到webview
+    public static void synCookies(Context context, String url) {
+        User user = ApiUser.syncGetLocalUserData(context);
+        if(user != null) {
+            CookieSyncManager.createInstance(context);
+            CookieManager cookieManager = CookieManager.getInstance();
+            cookieManager.setCookie(url, "uid=" + user.getUserId());
+            CookieSyncManager.getInstance().sync();
+        }
+    }
+
 }
