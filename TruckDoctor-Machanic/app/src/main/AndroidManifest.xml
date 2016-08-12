@@ -68,11 +68,14 @@
             android:windowSoftInputMode="adjustResize">
         </activity>
 
-        <!--应用主页-->
+        <!--应用主页
+          不使用硬件加速
+        -->
         <activity android:name=".activity.MainWebActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTop"
+            android:hardwareAccelerated="false"/>
 
         <!-- Required SDK核心功能 -->
         <activity
