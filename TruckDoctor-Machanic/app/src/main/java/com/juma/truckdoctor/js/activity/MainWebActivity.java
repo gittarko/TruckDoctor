@@ -18,6 +18,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
 
@@ -50,6 +51,7 @@ public class MainWebActivity extends BaseActivity implements BackHandledInterfac
 
     //订单提醒控件
     private BadgeView mBvOrders;
+    private BadgeView mBvMsg;
 
     private FragmentTabHost mTabHost;
     private BackHandledFragment backHandledFragment;
@@ -112,15 +114,27 @@ public class MainWebActivity extends BaseActivity implements BackHandledInterfac
             mTabHost.addTab(tabSpec, tab.getClz(), data);
 
             if (tab.equals(BottomTab.ORDERS)) {
-                View mes = indicator.findViewById(R.id.tab_mes);
+                View mes = indicator.findViewById(R.id.tab_title);
                 mBvOrders = new BadgeView(this, mes);
                 //提醒放置在右上角
                 mBvOrders.setBadgePosition(BadgeView.POSITION_TOP_RIGHT);
                 //设置提醒的文字大小
-                mBvOrders.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+                mBvOrders.setTextSize(TypedValue.COMPLEX_UNIT_SP, 8);
                 //设置提醒背景
                 mBvOrders.setBackgroundResource(R.drawable.notification_bg);
                 mBvOrders.setGravity(Gravity.CENTER);
+                mBvOrders.setBadgeMargin(20, 2);
+            }else if(tab.equals(BottomTab.MESSAGE)) {
+                View mes = indicator.findViewById(R.id.tab_title);
+                mBvMsg = new BadgeView(this, mes);
+                //提醒放置在右上角
+                mBvMsg.setBadgePosition(BadgeView.POSITION_TOP_RIGHT);
+                //设置提醒的文字大小
+                mBvMsg.setTextSize(TypedValue.COMPLEX_UNIT_SP, 2);
+                //设置提醒背景
+                mBvMsg.setBackgroundResource(R.drawable.notification_bg);
+                mBvMsg.setGravity(Gravity.CENTER);
+                mBvMsg.setBadgeMargin(25, 0);
             }
         }
     }
@@ -135,11 +149,13 @@ public class MainWebActivity extends BaseActivity implements BackHandledInterfac
         View indicator = getLayoutInflater().from(getApplicationContext())
                 .inflate(R.layout.tab_indicator, null);
         TextView title = (TextView) indicator.findViewById(R.id.tab_title);
+//        ImageView icon = (ImageView)indicator.findViewById(R.id.tab_icon);
         Drawable drawable = this.getResources().getDrawable(
                 mainTab.getResIcon());
-        //设置文字上部图标
+//        //设置文字上部图标
         title.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null,
                 null);
+//        icon.setImageDrawable(drawable);
         //设置页卡文字内容
         title.setText(mainTab.getTabName());
         return indicator;
@@ -205,6 +221,11 @@ public class MainWebActivity extends BaseActivity implements BackHandledInterfac
      * @param number
      */
     public void setTabNotice(int number) {
+        if(mBvOrders == null) {
+            return;
+        }
+
+        number = 1;
         if(number == 0) {
             mBvOrders.setText("");
             mBvOrders.hide();
@@ -240,7 +261,7 @@ public class MainWebActivity extends BaseActivity implements BackHandledInterfac
     public boolean onKeyDown(int keyCode, final KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (backHandledFragment.onBackPressed()) {
-                return true;
+//                return false;
             }
         }
         return super.onKeyDown(keyCode, event);

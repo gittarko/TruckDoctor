@@ -9,6 +9,7 @@ import com.juma.truckdoctor.js.api.ApiUser;
 import com.juma.truckdoctor.js.exception.CrashHandler;
 import com.juma.truckdoctor.js.model.User;
 import com.juma.truckdoctor.js.utils.SystemParamUtil;
+import com.squareup.leakcanary.LeakCanary;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.util.Set;
@@ -66,6 +67,8 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         application = this;
+        LeakCanary.install(this);
+
         if(IS_SAVE_CRASH) {
             //初始化全局异常捕获
             CrashHandler.getInstance().init(this)
@@ -118,7 +121,8 @@ public class BaseApplication extends Application {
          在TagAliasCallback 的 gotResult 方法，返回对应的参数 alias, tags。并返回对应的状态码：0为成功，其他返回码请参考错误码定义。
 
          */
-        JPushInterface.setAlias(getContext(), String.valueOf(user.getUserId()), new TagAliasCallback() {
+        String alias = SystemParamUtil.getParamEnv().toUpperCase() + "_" + "TD" + user.getUserId();
+        JPushInterface.setAlias(getContext(), alias, new TagAliasCallback() {
             @Override
             public void gotResult(int responseCode, String alias, Set<String> set) {
                 if(responseCode == 0) {

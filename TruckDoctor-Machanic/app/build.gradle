@@ -78,7 +78,7 @@ android {
             applicationId 'com.juma.truckdoctor.js'
             versionCode 1
             versionName '1.0.0'
-            manifestPlaceholders = [env             : "official",
+            manifestPlaceholders = [env             : "prod",
                                     app             : "machanic",
                                     app_name        : "@string/app_name",
                                     icon_img        : "@drawable/app_icon_machanic",
@@ -119,4 +119,8 @@ dependencies {
     compile 'com.zhy:okhttputils:2.6.2'
     compile files('libs/jpush-android-2.1.5.jar')
 
+    //内存泄漏检测
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
 }

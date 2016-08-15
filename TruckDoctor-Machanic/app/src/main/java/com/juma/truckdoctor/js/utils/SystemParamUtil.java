@@ -14,7 +14,7 @@ public final class SystemParamUtil {
 
     public static final String ENV_DEV = "dev";
     public static final String ENV_TEST = "test";
-    public static final String ENV_OFFICIAL = "official";
+    public static final String ENV_OFFICIAL = "prod";
 
     public static final String APP_MACHANIC = "machanic";
     public static final String APP_DRIVER = "driver";
